@@ -1,12 +1,12 @@
 <template>
   <a-drawer
-    title="查看客户信息"
+    title="分配客户数据"
     :maskClosable="false"
     width=650
     placement="right"
     :closable="false"
     @close="onClose"
-    :visible="dataEditVisiable"
+    :visible="dataDistributeVisiable"
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
     <a-form :form="form">
       <a-form-item label='客户名' v-bind="formItemLayout">
@@ -18,15 +18,19 @@
       <a-form-item label="客户电话" v-bind="formItemLayout">
         <a-input readOnly v-decorator="['clientPhone']"/>
       </a-form-item>
-      <a-form-item label='备注信息' v-bind="formItemLayout">
-        <a-textarea
-          :rows="4"
-          v-decorator="[
-          'describe',
-          {rules: [
-            { max: 100, message: '长度不能超过100个字'}
-          ]}]">
-        </a-textarea>
+      <a-form-item label='分配对象选择'
+                   style="margin-bottom: 2rem"
+                   v-bind="formItemLayout">
+        <a-tree
+          :key="userTreeKey"
+          :checkable="true"
+          :checkStrictly="checkStrictly"
+          @check="handleCheck"
+          @expand="handleExpand"
+          :expandedKeys="expandedKeys"
+          :treeData="userTreeData"
+          :multiple="multiple">
+        </a-tree>
       </a-form-item>
     </a-form>
     <div class="drawer-bootom-button">
@@ -45,9 +49,9 @@ const formItemLayout = {
   wrapperCol: { span: 18 }
 }
 export default {
-  name: 'DataEdit',
+  name: 'DataDistribute',
   props: {
-    dataEditVisiable: {
+    dataDistributeVisiable: {
       default: false
     }
   },
@@ -56,25 +60,35 @@ export default {
       formItemLayout,
       form: this.$form.createForm(this),
       id: '',
-      loading: false
+      multiple:false,
+      loading: false,
+      oper: {},
+      checkedKeys: [],
+      expandedKeys: [],
+      userTreeData: [],
+      userTreeKeys: +new Date()
     }
   },
-  computed: {
-    ...mapState({
-      currentUser: state => state.account.user
-    })
-  },
   methods: {
-    ...mapMutations({
-      setUser: 'account/setUser'
-    }),
+    reset () {
+      this.loading = false
+      this.userTreeKeys = +new Date()
+      this.expandedKeys = this.checkedKeys = []
+      this.oper = {}
+      this.form.resetFields()
+    },
     onClose () {
       this.loading = false
-      this.form.resetFields()
+      this.reset()
       this.$emit('close')
     },
+    handleCheck (checkedKeys) {
+      this.checkedKeys = checkedKeys
+    },
+    handleExpand (expandedKeys) {
+      this.expandedKeys = expandedKeys
+    },
     setFormValues ({...user}) {
-      this.id = user.id
       let fields = ['clientName', 'clientIdNum', 'clientPhone', 'describe']
       Object.keys(user).forEach((key) => {
         if (fields.indexOf(key) !== -1) {
@@ -86,13 +100,17 @@ export default {
       })
     },
     handleSubmit () {
+      let checkedArr = Object.is(this.checkedKeys.checked, undefined) ? this.checkedKeys : this.checkedKeys.checked
+      if (checkedArr.length > 1) {
+        this.$message.error('最多只能选择一个用户，请修改')
+        return
+      }
       this.form.validateFields((err, values) => {
         if (!err) {
           this.loading = true
           let user = this.form.getFieldsValue()
-          user.id = this.id
           this.$put('ddata/update', {
-            ...user
+            id:checkedArr[0]
           }).then((r) => {
             this.loading = false
             this.$emit('success')
@@ -101,6 +119,16 @@ export default {
           })
         }
       })
+    }
+  },
+  watch: {
+    dataDistributeVisiable () {
+      if (this.dataDistributeVisiable) {
+        this.$get('user').then((r) => {
+          this.userTreeData = r.data.rows.children
+          this.userTreeKey = +new Date()
+        })
+      }
     }
   }
 }

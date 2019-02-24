@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="新增定时任务"
+    title="新增客户"
     :maskClosable="false"
     width=650
     placement="right"

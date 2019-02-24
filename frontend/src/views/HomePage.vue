@@ -71,6 +71,7 @@
                 <a-icon type="check" theme="twoTone" v-show="record.status" twoToneColor="#4a9ff5" @click="finish(record)" title="完成"></a-icon>
                 &nbsp;
                 <a-icon type="eye" theme="twoTone" v-show="record.status" twoToneColor="#42b983" @click="edit(record)" title="查看"></a-icon>
+                <a-icon type="eye" theme="twoTone" v-show="record.status" twoToneColor="#42b983" @click="distribute(record)" title="分配"></a-icon>
               </template>
             </a-table>
             <!-- 新增数据 -->
@@ -83,7 +84,14 @@
               ref="userEdit"
               @close="handleDataEditClose"
               @success="handleDataEditSuccess"
-              :userEditVisiable="dataEdit.visiable">
+              :dataEditVisiable="dataEdit.visiable">
+            </data-edit>
+            <!--分配用户 -->
+            <data-edit
+              ref="userDistribute"
+              @close="handleDataEditClose"
+              @success="handleDataEditSuccess"
+              :dataDistributeVisiable="dataDistribute.visiable">
             </data-edit>
           </div>
         </a-card>
@@ -95,13 +103,14 @@
 import HeadInfo from '@/views/common/HeadInfo'
 import DataAdd from '@/views/data/DataAdd'
 import DataEdit from '@/views/data/DataEdit'
+import DataDistribute from '@/views/data/DataDistribute'
 import {mapState} from 'vuex'
 import moment from 'moment'
 moment.locale('zh-cn');
 
 export default {
   name: 'HomePage',
-  components: {HeadInfo,DataAdd,DataEdit},
+  components: {HeadInfo,DataAdd,DataEdit,DataDistribute},
   data () {
     return {
       month: '',
@@ -114,6 +123,9 @@ export default {
         visiable: false
       },
       dataEdit: {
+        visiable: false
+      },
+      dataDistribute: {
         visiable: false
       },
       dataSource: [],
@@ -210,6 +222,17 @@ export default {
         this.$message.error('获取首页信息失败')
       })
       this.fetch()
+    },
+    distribute(){
+      this.dataDistribute.visiable = true
+    },
+    handleUserAddClose () {
+      this.dataDistribute.visiable = false
+    },
+    handleUserAddSuccess () {
+      this.dataDistribute.visiable = false
+      this.$message.success('分配成功')
+      this.search()
     },
     add () {
       this.dataAdd.visiable = true
@@ -391,4 +414,5 @@ export default {
       }
     }
   }
+  @import "../../static/less/Common";
 </style>
