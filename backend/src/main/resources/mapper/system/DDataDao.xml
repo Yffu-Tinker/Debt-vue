@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.system.dao.DDataMapper">
+  <resultMap id="BaseResultMap" type="cc.mrbird.febs.system.domain.DData">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="CLIENT_NAME" jdbcType="VARCHAR" property="clientName" />
+    <result column="CLIENT_ID_NUM" jdbcType="VARCHAR" property="clientIdNum" />
+    <result column="CLIENT_PHONE" jdbcType="VARCHAR" property="clientPhone" />
+    <result column="DATA_STATUS" jdbcType="CHAR" property="dataStatus" />
+    <result column="OPERATOR_ID" jdbcType="INTEGER" property="operatorId" />
+    <result column="OPERATOR_NAME" jdbcType="VARCHAR" property="operatorName" />
+    <result column="DATA_SOURCE" jdbcType="VARCHAR" property="dataSource" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="LAST_OPERAT_TIME" jdbcType="TIMESTAMP" property="lastOperatTime" />
+    <result column="CREATE_USER_ID" jdbcType="VARCHAR" property="createUserId" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="cc.mrbird.febs.system.domain.DData">
+    <result column="DESCRIBE" jdbcType="LONGVARCHAR" property="describe" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    ID, CLIENT_NAME, CLIENT_ID_NUM, CLIENT_PHONE, DATA_STATUS, OPERATOR_ID, OPERATOR_NAME, 
+    DATA_SOURCE, CREATE_TIME, LAST_OPERAT_TIME, CREATE_USER_ID
+  </sql>
+  <sql id="Blob_Column_List">
+    `DESCRIBE`
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="cc.mrbird.febs.system.domain.DDataExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from d_data
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="cc.mrbird.febs.system.domain.DDataExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from d_data
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from d_data
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from d_data
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cc.mrbird.febs.system.domain.DDataExample">
+    delete from d_data
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" keyColumn="ID" keyProperty="id" parameterType="cc.mrbird.febs.system.domain.DData" useGeneratedKeys="true">
+    insert into d_data (CLIENT_NAME, CLIENT_ID_NUM, CLIENT_PHONE, 
+      DATA_STATUS, OPERATOR_ID, OPERATOR_NAME, 
+      DATA_SOURCE, CREATE_TIME, LAST_OPERAT_TIME, 
+      CREATE_USER_ID, `DESCRIBE`)
+    values (#{clientName,jdbcType=VARCHAR}, #{clientIdNum,jdbcType=VARCHAR}, #{clientPhone,jdbcType=VARCHAR}, 
+      #{dataStatus,jdbcType=CHAR}, #{operatorId,jdbcType=INTEGER}, #{operatorName,jdbcType=VARCHAR}, 
+      #{dataSource,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{lastOperatTime,jdbcType=TIMESTAMP}, 
+      #{createUserId,jdbcType=VARCHAR}, #{describe,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="ID" keyProperty="id" parameterType="cc.mrbird.febs.system.domain.DData" useGeneratedKeys="true">
+    insert into d_data
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="clientName != null">
+        CLIENT_NAME,
+      </if>
+      <if test="clientIdNum != null">
+        CLIENT_ID_NUM,
+      </if>
+      <if test="clientPhone != null">
+        CLIENT_PHONE,
+      </if>
+      <if test="dataStatus != null">
+        DATA_STATUS,
+      </if>
+      <if test="operatorId != null">
+        OPERATOR_ID,
+      </if>
+      <if test="operatorName != null">
+        OPERATOR_NAME,
+      </if>
+      <if test="dataSource != null">
+        DATA_SOURCE,
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME,
+      </if>
+      <if test="lastOperatTime != null">
+        LAST_OPERAT_TIME,
+      </if>
+      <if test="createUserId != null">
+        CREATE_USER_ID,
+      </if>
+      <if test="describe != null">
+        `DESCRIBE`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="clientName != null">
+        #{clientName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIdNum != null">
+        #{clientIdNum,jdbcType=VARCHAR},
+      </if>
+      <if test="clientPhone != null">
+        #{clientPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="dataStatus != null">
+        #{dataStatus,jdbcType=CHAR},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="operatorName != null">
+        #{operatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSource != null">
+        #{dataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastOperatTime != null">
+        #{lastOperatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null">
+        #{createUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        #{describe,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cc.mrbird.febs.system.domain.DDataExample" resultType="java.lang.Long">
+    select count(*) from d_data
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update d_data
+    <set>
+      <if test="record.id != null">
+        ID = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.clientName != null">
+        CLIENT_NAME = #{record.clientName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clientIdNum != null">
+        CLIENT_ID_NUM = #{record.clientIdNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clientPhone != null">
+        CLIENT_PHONE = #{record.clientPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataStatus != null">
+        DATA_STATUS = #{record.dataStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.operatorId != null">
+        OPERATOR_ID = #{record.operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="record.operatorName != null">
+        OPERATOR_NAME = #{record.operatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataSource != null">
+        DATA_SOURCE = #{record.dataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastOperatTime != null">
+        LAST_OPERAT_TIME = #{record.lastOperatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUserId != null">
+        CREATE_USER_ID = #{record.createUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.describe != null">
+        `DESCRIBE` = #{record.describe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update d_data
+    set ID = #{record.id,jdbcType=INTEGER},
+      CLIENT_NAME = #{record.clientName,jdbcType=VARCHAR},
+      CLIENT_ID_NUM = #{record.clientIdNum,jdbcType=VARCHAR},
+      CLIENT_PHONE = #{record.clientPhone,jdbcType=VARCHAR},
+      DATA_STATUS = #{record.dataStatus,jdbcType=CHAR},
+      OPERATOR_ID = #{record.operatorId,jdbcType=INTEGER},
+      OPERATOR_NAME = #{record.operatorName,jdbcType=VARCHAR},
+      DATA_SOURCE = #{record.dataSource,jdbcType=VARCHAR},
+      CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      LAST_OPERAT_TIME = #{record.lastOperatTime,jdbcType=TIMESTAMP},
+      CREATE_USER_ID = #{record.createUserId,jdbcType=VARCHAR},
+      `DESCRIBE` = #{record.describe,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update d_data
+    set ID = #{record.id,jdbcType=INTEGER},
+      CLIENT_NAME = #{record.clientName,jdbcType=VARCHAR},
+      CLIENT_ID_NUM = #{record.clientIdNum,jdbcType=VARCHAR},
+      CLIENT_PHONE = #{record.clientPhone,jdbcType=VARCHAR},
+      DATA_STATUS = #{record.dataStatus,jdbcType=CHAR},
+      OPERATOR_ID = #{record.operatorId,jdbcType=INTEGER},
+      OPERATOR_NAME = #{record.operatorName,jdbcType=VARCHAR},
+      DATA_SOURCE = #{record.dataSource,jdbcType=VARCHAR},
+      CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      LAST_OPERAT_TIME = #{record.lastOperatTime,jdbcType=TIMESTAMP},
+      CREATE_USER_ID = #{record.createUserId,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cc.mrbird.febs.system.domain.DData">
+    update d_data
+    <set>
+      <if test="clientName != null">
+        CLIENT_NAME = #{clientName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIdNum != null">
+        CLIENT_ID_NUM = #{clientIdNum,jdbcType=VARCHAR},
+      </if>
+      <if test="clientPhone != null">
+        CLIENT_PHONE = #{clientPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="dataStatus != null">
+        DATA_STATUS = #{dataStatus,jdbcType=CHAR},
+      </if>
+      <if test="operatorId != null">
+        OPERATOR_ID = #{operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="operatorName != null">
+        OPERATOR_NAME = #{operatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSource != null">
+        DATA_SOURCE = #{dataSource,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastOperatTime != null">
+        LAST_OPERAT_TIME = #{lastOperatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null">
+        CREATE_USER_ID = #{createUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        `DESCRIBE` = #{describe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="cc.mrbird.febs.system.domain.DData">
+    update d_data
+    set CLIENT_NAME = #{clientName,jdbcType=VARCHAR},
+      CLIENT_ID_NUM = #{clientIdNum,jdbcType=VARCHAR},
+      CLIENT_PHONE = #{clientPhone,jdbcType=VARCHAR},
+      DATA_STATUS = #{dataStatus,jdbcType=CHAR},
+      OPERATOR_ID = #{operatorId,jdbcType=INTEGER},
+      OPERATOR_NAME = #{operatorName,jdbcType=VARCHAR},
+      DATA_SOURCE = #{dataSource,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      LAST_OPERAT_TIME = #{lastOperatTime,jdbcType=TIMESTAMP},
+      CREATE_USER_ID = #{createUserId,jdbcType=VARCHAR},
+      `DESCRIBE` = #{describe,jdbcType=LONGVARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cc.mrbird.febs.system.domain.DData">
+    update d_data
+    set CLIENT_NAME = #{clientName,jdbcType=VARCHAR},
+      CLIENT_ID_NUM = #{clientIdNum,jdbcType=VARCHAR},
+      CLIENT_PHONE = #{clientPhone,jdbcType=VARCHAR},
+      DATA_STATUS = #{dataStatus,jdbcType=CHAR},
+      OPERATOR_ID = #{operatorId,jdbcType=INTEGER},
+      OPERATOR_NAME = #{operatorName,jdbcType=VARCHAR},
+      DATA_SOURCE = #{dataSource,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      LAST_OPERAT_TIME = #{lastOperatTime,jdbcType=TIMESTAMP},
+      CREATE_USER_ID = #{createUserId,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
