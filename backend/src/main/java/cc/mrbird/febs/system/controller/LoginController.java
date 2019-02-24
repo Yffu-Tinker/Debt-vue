@@ -15,6 +15,7 @@ import cc.mrbird.febs.system.domain.LoginLog;
 import cc.mrbird.febs.system.domain.User;
 import cc.mrbird.febs.system.domain.UserConfig;
 import cc.mrbird.febs.system.manager.UserManager;
+import cc.mrbird.febs.system.service.DDataHistoryService;
 import cc.mrbird.febs.system.service.LoginLogService;
 import cc.mrbird.febs.system.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,6 +48,8 @@ public class LoginController {
     private FebsProperties properties;
     @Autowired
     private ObjectMapper mapper;
+    @Autowired
+    DDataHistoryService dDataHistoryService;
 
     @PostMapping("/login")
     @Limit(key = "login", period = 60, count = 20, name = "登录接口", prefix = "limit")
@@ -85,24 +88,24 @@ public class LoginController {
         return new FebsResponse().message("认证成功").data(userInfo);
     }
 
-    @GetMapping("index/{username}")
-    public FebsResponse index(@NotBlank(message = "{required}") @PathVariable String username) {
-        Map<String, Object> data = new HashMap<>();
-        // 获取系统访问记录
-        Long totalVisitCount = loginLogMapper.findTotalVisitCount();
-        data.put("totalVisitCount", totalVisitCount);
-        Long todayVisitCount = loginLogMapper.findTodayVisitCount();
-        data.put("todayVisitCount", todayVisitCount);
-        Long todayIp = loginLogMapper.findTodayIp();
-        data.put("todayIp", todayIp);
-        // 获取近期系统访问记录
-        List<Map<String, Object>> lastSevenVisitCount = loginLogMapper.findLastSevenDaysVisitCount(null);
-        data.put("lastSevenVisitCount", lastSevenVisitCount);
-        User param = new User();
-        param.setUsername(username);
-        List<Map<String, Object>> lastSevenUserVisitCount = loginLogMapper.findLastSevenDaysVisitCount(param);
-        data.put("lastSevenUserVisitCount", lastSevenUserVisitCount);
-        return new FebsResponse().data(data);
+    @GetMapping("index/{userId}")
+    public FebsResponse index(@NotBlank(message = "{required}") @PathVariable Long userId) {
+//        Map<String, Object> data = new HashMap<>();
+//        // 获取系统访问记录
+//        Long totalVisitCount = loginLogMapper.findTotalVisitCount();
+//        data.put("totalVisitCount", totalVisitCount);
+//        Long todayVisitCount = loginLogMapper.findTodayVisitCount();
+//        data.put("todayVisitCount", todayVisitCount);
+//        Long todayIp = loginLogMapper.findTodayIp();
+//        data.put("todayIp", todayIp);
+//        // 获取近期系统访问记录
+//        List<Map<String, Object>> lastSevenVisitCount = loginLogMapper.findLastSevenDaysVisitCount(null);
+//        data.put("lastSevenVisitCount", lastSevenVisitCount);
+//        User param = new User();
+//        param.setUsername(username);
+//        List<Map<String, Object>> lastSevenUserVisitCount = loginLogMapper.findLastSevenDaysVisitCount(param);
+//        data.put("lastSevenUserVisitCount", lastSevenUserVisitCount);
+        return new FebsResponse().data(this.dDataHistoryService.statistics(userId));
     }
 
     @RequiresPermissions("user:online")
