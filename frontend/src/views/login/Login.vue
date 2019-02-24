@@ -46,9 +46,9 @@
           登录
         </a-button>
       </a-form-item>
-      <div>
+      <!--<div>
         <a style="float: right" @click="regist">注册账户</a>
-      </div>
+      </div>-->
     </a-form>
   </div>
 </template>
