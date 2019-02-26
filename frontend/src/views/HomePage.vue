@@ -39,18 +39,18 @@
           <apexchart ref="count" type=bar height=300 :options="chartOptions" :series="series" />
         </a-card>
       </a-col>-->
-      <a-col :span="12" class="project-wrapper">
-        <a-card title="进行中的项目" class="project-card">
+      <a-col class="project-wrapper">
+        <!--<a-card title="进行中的项目" class="project-card">-->
           <div class="operator">
             <a-button v-hasPermission="'role:add'" ghost type="primary" @click="add">新增</a-button>
-            <a-dropdown v-hasPermission="'role:export'">
+            <!--<a-dropdown v-hasPermission="'role:export'">
               <a-menu slot="overlay">
                 <a-menu-item key="export-data" @click="exprotExccel">导出Excel</a-menu-item>
               </a-menu>
               <a-button>
                 更多操作 <a-icon type="down" />
               </a-button>
-            </a-dropdown>
+            </a-dropdown>-->
             <!-- 表格区域 -->
             <a-table ref="TableInfo"
                      :columns="columns"
@@ -68,7 +68,7 @@
                 </a-popover>
               </template>
               <template slot="operation" slot-scope="text, record">
-                <a-icon type="check" theme="twoTone" v-show="record.status" twoToneColor="#4a9ff5" @click="finish(record)" title="完成"></a-icon>
+                <a-icon type="eye" theme="twoTone" v-show="record.status" twoToneColor="#4a9ff5" @click="finish(record)" title="完成"></a-icon>
                 &nbsp;
                 <a-icon type="eye" theme="twoTone" v-show="record.status" twoToneColor="#42b983" @click="edit(record)" title="查看"></a-icon>
                 <a-icon type="eye" theme="twoTone" v-show="record.status" twoToneColor="#42b983" @click="distribute(record)" title="分配"></a-icon>
@@ -94,7 +94,7 @@
               :dataDistributeVisiable="dataDistribute.visiable">
             </data-edit>
           </div>
-        </a-card>
+        <!--</a-card>-->
       </a-col>
     </a-row>
   </div>
@@ -199,6 +199,7 @@ export default {
   },
   methods: {
     welcome() {
+      debugger;
       const date = new Date()
       const hour = date.getHours()
       let time = hour < 6 ? '早上好' : (hour <= 11 ? '上午好' : (hour <= 13 ? '中午好' : (hour <= 18 ? '下午好' : '晚上好')))
@@ -223,13 +224,25 @@ export default {
       })
       this.fetch()
     },
+    handleTableChange (pagination, filters, sorter) {
+      // 将这三个参数赋值给Vue data，用于后续使用
+      this.paginationInfo = pagination
+      this.filteredInfo = filters
+      this.sortedInfo = sorter
+
+      this.fetch({
+        sortField: sorter.field,
+        sortOrder: sorter.order,
+        ...filters
+      })
+    },
     distribute(){
       this.dataDistribute.visiable = true
     },
-    handleUserAddClose () {
+    handleDataAddClose () {
       this.dataDistribute.visiable = false
     },
-    handleUserAddSuccess () {
+    handleDataAddSuccess () {
       this.dataDistribute.visiable = false
       this.$message.success('分配成功')
       this.search()
@@ -237,10 +250,10 @@ export default {
     add () {
       this.dataAdd.visiable = true
     },
-    handleUserAddClose () {
+    handleDataAddClose () {
       this.dataAdd.visiable = false
     },
-    handleUserAddSuccess () {
+    handleDataAddSuccess () {
       this.dataAdd.visiable = false
       this.$message.success('新增数据成功')
       this.search()
@@ -249,10 +262,10 @@ export default {
       this.$refs.dataEdit.setFormValues(record)
       this.dataEdit.visiable = true
     },
-    handleUserEditClose () {
+    handleDataEditClose () {
       this.dataEdit.visiable = false
     },
-    handleUserEditSuccess () {
+    handleDataEditSuccess () {
       this.dataEdit.visiable = false
       this.$message.success('操作成功')
     },
