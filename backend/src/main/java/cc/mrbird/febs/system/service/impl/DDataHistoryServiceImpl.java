@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Service
+@Service("dDataHistoryService")
 public class DDataHistoryServiceImpl extends BaseService<DDataHistory> implements DDataHistoryService {
 
     @Autowired

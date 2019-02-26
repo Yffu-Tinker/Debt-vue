@@ -73,21 +73,21 @@ public class DDataHistory implements Serializable {
      * 数据源
      */
     @Column(name = "OPERATOR_NAME")
-    @ExcelField(value = "业务员姓名")
+    @ExcelField(value = "数据源")
     private String dataSource;
 
     /**
      * 创建时间
      */
     @Column(name = "CREATE_TIME")
-    @ExcelField(value = "业务员姓名")
+    @ExcelField(value = "创建时间")
     private Date createTime;
 
     /**
      * 最后操作时间
      */
     @Column(name = "LAST_OPERAT_TIME")
-    @ExcelField(value = "业务员姓名")
+    @ExcelField(value = "最后操作时间")
     private Date lastOperatTime;
 
     /**
@@ -100,11 +100,15 @@ public class DDataHistory implements Serializable {
     /**
      * 记录（备注）
      */
-    @Column(name = "DESCRIBE")
+    @Column(name = "OPERATOR_DESCRIBE")
     @ExcelField(value = "记录")
     private String describe;
 
-    private static final long serialVersionUID = 1L;
+    @Column(name = "AMOUNT")
+    @ExcelField(value = "金额")
+    private Integer amount;
+
+    private static final long serialVersionUID = 98988778L;
 
 
 }

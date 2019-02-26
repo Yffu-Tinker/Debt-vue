@@ -4,7 +4,6 @@ package cc.mrbird.febs.system.service.impl;
 import cc.mrbird.febs.common.domain.QueryRequest;
 import cc.mrbird.febs.common.service.impl.BaseService;
 import cc.mrbird.febs.common.utils.FebsUtil;
-import cc.mrbird.febs.system.dao.DDataHistoryMapper;
 import cc.mrbird.febs.system.domain.DData;
 import cc.mrbird.febs.system.domain.DDataHistory;
 import cc.mrbird.febs.system.service.DDataHistoryService;
@@ -17,12 +16,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 
 @Slf4j
-@Service
+@Service("dDataService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class DDataServiceImpl extends BaseService<DData> implements DDataService {
 
@@ -60,7 +58,7 @@ public class DDataServiceImpl extends BaseService<DData> implements DDataService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void finishData(DData dData) throws Exception{
+    public void finishData(DData dData) throws Exception {
         DDataHistory dDataHistory = new DDataHistory();
         BeanUtil.copyProperties(dDataHistory, dData);
 

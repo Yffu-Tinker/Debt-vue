@@ -29,23 +29,23 @@ public class DDataController extends BaseController {
 
     @GetMapping
     @Log("查询数据列表")
-    public Map<String,Object> ddataList(QueryRequest queryRequest,DData dData){
-        return super.selectByPageNumSize(queryRequest,()-> this.dDataService.findDData(queryRequest,dData));
+    public Map<String, Object> ddataList(QueryRequest queryRequest, DData dData) {
+        return super.selectByPageNumSize(queryRequest, () -> this.dDataService.findDData(queryRequest, dData));
     }
 
 
     @PostMapping("/create")
-    public void createData(@Valid  DData dData){
+    public void createData(@Valid DData dData) {
         this.dDataService.createDData(dData);
     }
 
     @PostMapping("/update")
     public FebsResponse updateData(@Valid DData dData) throws FebsException {
-        if(dData.getDataStatus().equals("finish")){
+        if (dData.getDataStatus().equals("finish")) {
             try {
                 this.dDataService.finishData(dData);
             } catch (Exception e) {
-                log.error("数据转化异常",e);
+                log.error("数据转化异常", e);
                 throw new FebsException("数据归档异常");
             }
             return new FebsResponse().message("数据已归档");
@@ -56,9 +56,14 @@ public class DDataController extends BaseController {
 
     @GetMapping("/delete/{dataId}")
     @RequiresPermissions("data:delete")
-    public FebsResponse deleteData(@PathVariable Integer dataId){
+    public FebsResponse deleteData(@PathVariable Integer dataId) {
         this.dDataService.deleteDData(dataId);
-        return new FebsResponse().message("已删除数据编号"+dataId);
+        return new FebsResponse().message("已删除数据编号" + dataId);
+    }
+
+    @GetMapping("/statistics")
+    public FebsResponse statistics() {
+        return new FebsResponse().data("");
     }
 
 

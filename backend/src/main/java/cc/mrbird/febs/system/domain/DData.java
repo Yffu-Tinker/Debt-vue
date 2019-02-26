@@ -74,8 +74,8 @@ public class DData implements Serializable {
     /**
      * 数据源
      */
-    @Column(name = "OPERATOR_NAME")
-    @ExcelField(value = "业务员姓名")
+    @Column(name = "DATA_SOURCE")
+    @ExcelField(value = "数据源")
     private String dataSource;
 
     /**
@@ -102,9 +102,15 @@ public class DData implements Serializable {
     /**
      * 记录（备注）
      */
-    @Column(name = "DESCRIBE")
+    @Column(name = "OPERATOR_DESCRIBE")
     @ExcelField(value = "记录")
     private String describe;
+
+    @Column(name = "AMOUNT")
+    @ExcelField(value = "金额")
+    private Integer amount;
+
+
 
     private static final long serialVersionUID = 1L;
 

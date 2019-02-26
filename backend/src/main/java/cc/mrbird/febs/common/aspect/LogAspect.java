@@ -42,33 +42,33 @@ public class LogAspect {
         // do nothing
     }
 
-    @Around("pointcut()")
-    public Object around(ProceedingJoinPoint point) throws JsonProcessingException {
-        Object result = null;
-        long beginTime = System.currentTimeMillis();
-        try {
-            // 执行方法
-            result = point.proceed();
-        } catch (Throwable e) {
-            log.error(e.getMessage());
-        }
-        // 获取 request
-        HttpServletRequest request = HttpContextUtil.getHttpServletRequest();
-        // 设置 IP 地址
-        String ip = IPUtil.getIpAddr(request);
-        // 执行时长(毫秒)
-        long time = System.currentTimeMillis() - beginTime;
-        if (febsProperties.isOpenAopLog()) {
-            // 保存日志
-            String token = (String) SecurityUtils.getSubject().getPrincipal();
-            String username = JWTUtil.getUsername(token);
-
-            SysLog log = new SysLog();
-            log.setUsername(username);
-            log.setIp(ip);
-            log.setTime(time);
-            logService.saveLog(point, log);
-        }
-        return result;
-    }
+//    @Around("pointcut()")
+//    public Object around(ProceedingJoinPoint point) throws JsonProcessingException {
+//        Object result = null;
+//        long beginTime = System.currentTimeMillis();
+//        try {
+//            // 执行方法
+//            result = point.proceed();
+//        } catch (Throwable e) {
+//            log.error(e.getMessage());
+//        }
+//        // 获取 request
+//        HttpServletRequest request = HttpContextUtil.getHttpServletRequest();
+//        // 设置 IP 地址
+//        String ip = IPUtil.getIpAddr(request);
+//        // 执行时长(毫秒)
+//        long time = System.currentTimeMillis() - beginTime;
+//        if (febsProperties.isOpenAopLog()) {
+//            // 保存日志
+//            String token = (String) SecurityUtils.getSubject().getPrincipal();
+//            String username = JWTUtil.getUsername(token);
+//
+//            SysLog log = new SysLog();
+//            log.setUsername(username);
+//            log.setIp(ip);
+//            log.setTime(time);
+//            logService.saveLog(point, log);
+//        }
+//        return result;
+//    }
 }
