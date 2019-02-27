@@ -72,7 +72,7 @@ public class DDataHistory implements Serializable {
     /**
      * 数据源
      */
-    @Column(name = "OPERATOR_NAME")
+    @Column(name = "DATA_SOURCE")
     @ExcelField(value = "数据源")
     private String dataSource;
 

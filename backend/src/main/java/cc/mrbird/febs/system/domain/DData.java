@@ -82,14 +82,14 @@ public class DData implements Serializable {
      * 创建时间
      */
     @Column(name = "CREATE_TIME")
-    @ExcelField(value = "业务员姓名")
+    @ExcelField(value = "创建时间")
     private Date createTime;
 
     /**
      * 最后操作时间
      */
     @Column(name = "LAST_OPERAT_TIME")
-    @ExcelField(value = "业务员姓名")
+    @ExcelField(value = "最后操作时间")
     private Date lastOperatTime;
 
     /**
@@ -108,7 +108,7 @@ public class DData implements Serializable {
 
     @Column(name = "AMOUNT")
     @ExcelField(value = "金额")
-    private Integer amount;
+    private Float amount;
 
 
 
