@@ -48,7 +48,7 @@ public class DDataServiceImpl extends BaseService<DData> implements DDataService
     @Override
     public void updateDData(DData dData) {
         dData.setLastOperatTime(new Date());
-        this.save(dData);
+        this.updateNotNull(dData);
     }
 
     @Override

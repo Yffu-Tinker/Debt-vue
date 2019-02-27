@@ -51,7 +51,7 @@ public class DData implements Serializable {
     private String clientPhone;
 
     /**
-     * 数据状态 'redist 重新配分','finish 办结','dist 已分配','init 刚导入'
+     * 数据状态 'redist 重新配分','finish 放款','dist 已分配','init 待签约', 'refused 拒绝'
      */
     @Column(name = "DATA_STATUS")
     @ExcelField(value = "数据状态")
