@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 @Slf4j
-@Service("dDataService")
+@Service("dStatisticsService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class DStatisticsServiceImpl extends BaseService<DStatistics> implements DStatisticsService {
     @Override
