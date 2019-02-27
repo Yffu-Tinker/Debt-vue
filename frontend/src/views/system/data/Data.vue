@@ -7,57 +7,68 @@
         <div :class="advanced ? null: 'fold'">
             <a-col :md="12" :sm="24" >
               <a-form-item
-                label="用户名"
+                label="手机号码"
                 :labelCol="{span: 4}"
                 :wrapperCol="{span: 18, offset: 2}">
-                <a-input v-model="queryParams.username"/>
+                <a-input v-model="queryParams.clientPhone"/>
               </a-form-item>
             </a-col>
             <a-col :md="12" :sm="24" >
               <a-form-item
-                label="部门"
+                label="数据来源"
                 :labelCol="{span: 4}"
                 :wrapperCol="{span: 18, offset: 2}">
-                <dept-input-tree @change="handleDeptChange"
-                                 ref="deptTree">
-                </dept-input-tree>
+                <a-input v-model="queryParams.dataSource"/>
               </a-form-item>
             </a-col>
-          <template v-if="advanced">
-            <a-col :md="12" :sm="24" >
-              <a-form-item
-                label="创建时间"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
-                <range-date @change="handleDateChange" ref="createTime"></range-date>
-              </a-form-item>
-            </a-col>
-          </template>
         </div>
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-             <a @click="toggleAdvanced" style="margin-left: 8px">
+             <!--<a @click="toggleAdvanced" style="margin-left: 8px">
               {{advanced ? '收起' : '展开'}}
               <a-icon :type="advanced ? 'up' : 'down'" />
-            </a>
+            </a>-->
           </span>
         </a-row>
       </a-form>
     </div>
     <div>
       <div class="operator">
+
+        <!--<a-button @click="batchDelete" v-hasPermission="'user:export'">导入</a-button>-->
+        <a-upload
+          class="upload-area"
+          :fileList="fileList"
+          :remove="handleRemove"
+          :disabled="fileList.length === 1"
+          :beforeUpload="beforeUpload"
+          v-hasPermission="'user:export'" >
+          <a-button>
+            <a-icon type="upload" /> 选择.xlsx文件
+          </a-button>
+        </a-upload>
+        <a-button v-hasPermission="'user:export'" type="primary" @click="downloadTemplate" style="margin-right: .5rem">
+          模板下载
+        </a-button>
+        <a-button
+          v-hasPermission="'user:export'"
+          @click="handleUpload"
+          :disabled="fileList.length === 0"
+          :loading="uploading">
+          {{uploading ? '导入中' : '导入Excel' }}
+        </a-button>
         <a-button type="primary" ghost @click="add" v-hasPermission="'user:add'">新增</a-button>
-        <a-button @click="batchDelete" v-hasPermission="'user:delete'">删除</a-button>
-        <a-dropdown v-hasAnyPermission="'user:reset','user:export'">
+        <a-button type="primary" ghost @click="search" >刷新</a-button>
+        <!--<a-dropdown v-hasAnyPermission="'user:reset','user:export'">
           <a-menu slot="overlay">
-            <a-menu-item v-hasPermission="'user:reset'" key="password-reset" @click="resetPassword">密码重置</a-menu-item>
+            &lt;!&ndash;<a-menu-item v-hasPermission="'user:reset'" key="password-reset" @click="resetPassword">密码重置</a-menu-item>&ndash;&gt;
             <a-menu-item v-hasPermission="'user:export'" key="export-data" @click="exportExcel">导出Excel</a-menu-item>
           </a-menu>
           <a-button>
             更多操作 <a-icon type="down" />
           </a-button>
-        </a-dropdown>
+        </a-dropdown>-->
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo"
@@ -68,12 +79,12 @@
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                :scroll="{ x: 900 }"
                @change="handleTableChange">
-        <template slot="email" slot-scope="text, record">
+        <template slot="remark" slot-scope="text, record">
           <a-popover placement="topLeft">
             <template slot="content">
-              <div>{{text}}</div>
+              <div style="max-width: 200px">{{text}}</div>
             </template>
-            <p style="width: 150px;margin-bottom: 0">{{text}}</p>
+            <p style="width: 200px;margin-bottom: 0">{{text}}</p>
           </a-popover>
         </template>
         <template slot="operation" slot-scope="text, record">
@@ -83,6 +94,13 @@
           <a-badge v-hasNoPermission="'user:update','user:view'" status="warning" text="无权限"></a-badge>
         </template>
       </a-table>
+      <import-result
+        @close="handleClose"
+        :importData="importData"
+        :errors="errors"
+        :times="times"
+        :importResultVisible="importResultVisible">
+      </import-result>
     </div>
     <!-- 用户信息查看 -->
     <user-info
@@ -112,13 +130,20 @@ import DeptInputTree from '../dept/DeptInputTree'
 import RangeDate from '@/components/datetime/RangeDate'
 import UserAdd from './UserAdd'
 import UserEdit from './UserEdit'
+import ImportResult from '../../others/ImportResult'
 
 export default {
   name: 'User',
-  components: {UserInfo, UserAdd, UserEdit, DeptInputTree, RangeDate},
+  components: {UserInfo, UserAdd, UserEdit, DeptInputTree, RangeDate,ImportResult},
   data () {
     return {
+      fileList: [],
+      importData: [],
+      errors: [],
+      times: '',
+      uploading: false,
       advanced: false,
+      importResultVisible: false,
       userInfo: {
         visiable: false,
         data: {}
@@ -152,69 +177,45 @@ export default {
       sortedInfo = sortedInfo || {}
       filteredInfo = filteredInfo || {}
       return [{
-        title: '用户名',
-        dataIndex: 'username',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'username' && sortedInfo.order
+        title: '客户名称',
+        dataIndex: 'clientName'
       }, {
-        title: '性别',
-        dataIndex: 'ssex',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case '0':
-              return '男'
-            case '1':
-              return '女'
-            case '2':
-              return '保密'
-            default:
-              return text
-          }
-        },
-        filters: [
-          { text: '男', value: '0' },
-          { text: '女', value: '1' },
-          { text: '保密', value: '2' }
-        ],
-        filterMultiple: false,
-        filteredValue: filteredInfo.ssex || null,
-        onFilter: (value, record) => record.ssex.includes(value)
+        title: '客户身份证',
+        dataIndex: 'clientIdNum'
       }, {
-        title: '邮箱',
-        dataIndex: 'email',
-        scopedSlots: { customRender: 'email' },
-        width: 100
+        title: '客户电话号码',
+        dataIndex: 'clientPhone'
       }, {
-        title: '部门',
-        dataIndex: 'deptName'
-      }, {
-        title: '电话',
-        dataIndex: 'mobile'
+        title: '详情',
+        dataIndex: 'describe',
+        scopedSlots: { customRender: 'remark' },
+        width: 350
       }, {
         title: '状态',
-        dataIndex: 'status',
+        dataIndex: 'dataStatus',
         customRender: (text, row, index) => {
           switch (text) {
-            case '0':
-              return <a-tag color="red">锁定</a-tag>
-            case '1':
-              return <a-tag color="cyan">有效</a-tag>
+            case 'init':
+              return <a-tag color="blue">待签约</a-tag>
+            case 'redist':
+              return <a-tag color="orange">重新配分</a-tag>
+            case 'finish':
+              return <a-tag color="green">放款</a-tag>
+            case 'refused':
+              return <a-tag color="red">拒绝</a-tag>
             default:
               return text
           }
         },
         filters: [
-          { text: '有效', value: '1' },
-          { text: '锁定', value: '0' }
+          { text: '待签约', value: 'init' },
+          { text: '重新配分', value: 'redist' },
+          { text: '放款', value: 'finish' },
+          { text: '拒绝', value: 'refused' },
         ],
         filterMultiple: false,
-        filteredValue: filteredInfo.status || null,
-        onFilter: (value, record) => record.status.includes(value)
-      }, {
-        title: '创建时间',
-        dataIndex: 'createTime',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'createTime' && sortedInfo.order
+        filteredValue: filteredInfo.dataStatus || null,
+        onFilter: (value, record) => record.dataStatus.includes(value)
       }, {
         title: '操作',
         dataIndex: 'operation',
@@ -226,6 +227,48 @@ export default {
     this.fetch()
   },
   methods: {
+    handleClose () {
+      this.importResultVisible = false
+    },
+    downloadTemplate () {
+      this.$download('test/template', {}, '导入模板.xlsx')
+    },
+    handleRemove (file) {
+      if (this.uploading) {
+        this.$message.warning('文件导入中，请勿删除')
+        return
+      }
+      const index = this.fileList.indexOf(file)
+      const newFileList = this.fileList.slice()
+      newFileList.splice(index, 1)
+      this.fileList = newFileList
+    },
+    beforeUpload (file) {
+      this.fileList = [...this.fileList, file]
+      return false
+    },
+    handleUpload () {
+      const { fileList } = this
+      const formData = new FormData()
+      formData.append('file', fileList[0])
+      this.uploading = true
+      this.$upload('test/import', formData).then((r) => {
+        let data = r.data.data
+        if (data.data.length) {
+          this.fetch()
+        }
+        this.importData = data.data
+        this.errors = data.error
+        this.times = data.time / 1000
+        this.uploading = false
+        this.fileList = []
+        this.importResultVisible = true
+      }).catch((r) => {
+        console.error(r)
+        this.uploading = false
+        this.fileList = []
+      })
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -248,7 +291,7 @@ export default {
     },
     handleUserAddSuccess () {
       this.userAdd.visiable = false
-      this.$message.success('新增用户成功，初始密码为1234qwer')
+      this.$message.success('新增客户成功')
       this.search()
     },
     edit (record) {
@@ -260,7 +303,7 @@ export default {
     },
     handleUserEditSuccess () {
       this.userEdit.visiable = false
-      this.$message.success('修改用户成功')
+      this.$message.success('修改客户信息成功')
       this.search()
     },
     handleUserInfoClose () {
@@ -374,7 +417,7 @@ export default {
       // 重置查询参数
       this.queryParams = {}
       // 清空部门树选择
-      this.$refs.deptTree.reset()
+//      this.$refs.deptTree.reset()
       // 清空时间选择
       if (this.advanced) {
         this.$refs.createTime.reset()
@@ -409,7 +452,7 @@ export default {
         params.pageSize = this.pagination.defaultPageSize
         params.pageNum = this.pagination.defaultCurrent
       }
-      this.$get('user', {
+      this.$get('ddata', {
         ...params
       }).then((r) => {
         let data = r.data
@@ -425,5 +468,16 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+  .upload-area {
+    display: inline;
+    float: left;
+    /*width: 50%*/
+  }
+  .button-area {
+    margin-left: 1rem;
+    display: inline;
+    /*float: right;*/
+    /*width: 30%;*/
+  }
 @import "../../../../static/less/Common";
 </style>

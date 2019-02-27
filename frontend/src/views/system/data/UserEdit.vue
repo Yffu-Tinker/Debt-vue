@@ -9,66 +9,49 @@
     :visible="userEditVisiable"
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
     <a-form :form="form">
-      <a-form-item label='用户名' v-bind="formItemLayout">
-        <a-input readOnly v-decorator="['username']"/>
+      <a-form-item label='客户名' v-bind="formItemLayout">
+        <a-input  v-decorator="['clientName',
+                   {rules: [
+                    { required: true, message: '客户名称不能为空'},
+                    { max: 20, message: '长度不能超过10个字'}
+                  ]}]"/>
       </a-form-item>
-      <a-form-item label='邮箱' v-bind="formItemLayout">
-        <a-input
-          v-decorator="[
-          'email',
-          {rules: [
-            { type: 'email', message: '请输入正确的邮箱' },
-            { max: 50, message: '长度不能超过50个字符'}
-          ]}
-        ]"/>
+      <a-form-item label='身份证号' v-bind="formItemLayout">
+        <a-input v-decorator="['clientIdNum',
+                   {rules: [
+                    { max: 18, message: '长度不能超过18个字'}
+                  ]}]"/>
       </a-form-item>
-      <a-form-item label="手机" v-bind="formItemLayout">
-        <a-input
-          v-decorator="['mobile', {rules: [
-            { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
-          ]}]"/>
+      <a-form-item label="客户电话" v-bind="formItemLayout">
+        <a-input v-decorator="['clientPhone',
+                   {rules: [
+                    { required: true, message: '电话不能为空'},
+                    { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
+                  ]}]"/>
       </a-form-item>
-      <a-form-item label='角色' v-bind="formItemLayout">
-        <a-select
-          mode="multiple"
-          :allowClear="true"
-          style="width: 100%"
-          v-decorator="[
-            'roleId',
-            {rules: [{ required: true, message: '请选择角色' }]}
-          ]">
-          <a-select-option v-for="r in roleData" :key="r.roleId.toString()">{{r.roleName}}</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item label='部门' v-bind="formItemLayout">
-        <a-tree-select
-          :allowClear="true"
-          :dropdownStyle="{ maxHeight: '220px', overflow: 'auto' }"
-          :treeData="deptTreeData"
-          @change="onDeptChange"
-          :value="userDept">
-        </a-tree-select>
+      <a-form-item label='金额(万)' v-bind="formItemLayout" :help="help">
+        <a-input-number
+          type="number"
+          :min="1"
+          :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+          v-decorator="['amount']"
+        />
       </a-form-item>
       <a-form-item label='状态' v-bind="formItemLayout">
-        <a-radio-group
-          v-decorator="[
-            'status',
-            {rules: [{ required: true, message: '请选择状态' }]}
-          ]">
-          <a-radio value="0">锁定</a-radio>
-          <a-radio value="1">有效</a-radio>
+        <a-radio-group @change="onChange" v-decorator="['dataStatus',
+        {rules: [{ required: true, message: '请选择状态'}]}]">
+          <a-radio value="init">待签约</a-radio>
+          <a-radio value="finish">放款</a-radio>
+          <a-radio value="refused">拒绝</a-radio>
+          <!--<a-radio disabled value="redist">重新配分</a-radio>-->
         </a-radio-group>
       </a-form-item>
-      <a-form-item label='性别' v-bind="formItemLayout">
-        <a-radio-group
+      <a-form-item label='详情' v-bind="formItemLayout">
+        <a-textarea
+          :rows="24"
           v-decorator="[
-            'ssex',
-            {rules: [{ required: true, message: '请选择性别' }]}
-          ]">
-          <a-radio value="0">男</a-radio>
-          <a-radio value="1">女</a-radio>
-          <a-radio value="2">保密</a-radio>
-        </a-radio-group>
+          'describe']">
+        </a-textarea>
       </a-form-item>
     </a-form>
     <div class="drawer-bootom-button">
@@ -100,8 +83,10 @@ export default {
       deptTreeData: [],
       roleData: [],
       userDept: [],
-      userId: '',
-      loading: false
+      id: '',
+      loading: false,
+      finished: false,
+      help:""
     }
   },
   computed: {
@@ -119,8 +104,8 @@ export default {
       this.$emit('close')
     },
     setFormValues ({...user}) {
-      this.userId = user.userId
-      let fields = ['username', 'email', 'status', 'ssex', 'mobile']
+      this.id = user.id
+      let fields = ['clientName', 'clientIdNum', 'clientPhone', 'describe']
       Object.keys(user).forEach((key) => {
         if (fields.indexOf(key) !== -1) {
           this.form.getFieldDecorator(key)
@@ -129,54 +114,47 @@ export default {
           this.form.setFieldsValue(obj)
         }
       })
-      if (user.roleId) {
-        this.form.getFieldDecorator('roleId')
-        let roleArr = user.roleId.split(',')
-        this.form.setFieldsValue({'roleId': roleArr})
-      }
-      if (user.deptId) {
-        this.userDept = [user.deptId]
-      }
-    },
-    onDeptChange (value) {
-      this.userDept = value
     },
     handleSubmit () {
-      this.form.validateFields((err, values) => {
-        if (!err) {
-          this.loading = true
-          let user = this.form.getFieldsValue()
-          user.roleId = user.roleId.join(',')
-          user.userId = this.userId
-          user.deptId = this.userDept
-          this.$put('user', {
-            ...user
-          }).then((r) => {
-            this.loading = false
-            this.$emit('success')
-            // 如果修改用户就是当前登录用户的话，更新其state
-            if (user.username === this.currentUser.username) {
-              this.$get(`user/${user.username}`).then((r) => {
-                this.setUser(r.data)
-              })
-            }
-          }).catch(() => {
-            this.loading = false
-          })
-        }
-      })
-    }
-  },
-  watch: {
-    userEditVisiable () {
-      if (this.userEditVisiable) {
-        this.$get('role').then((r) => {
-          this.roleData = r.data.rows
-        })
-        this.$get('dept').then((r) => {
-          this.deptTreeData = r.data.rows.children
-        })
+      let user = this.form.getFieldsValue()
+      if (!this.checkAmount()) {
+        return;
       }
+        this.form.validateFields((err, values) => {
+          if (!err) {
+            this.loading = true
+            this.help = ''
+            user.id = this.id
+            user.operatorName = this.currentUser.username
+//          user.operatorId = parseFloat(this.currentUser.id)
+            this.$post('ddata/update', {
+              ...user
+            }).then((r) => {
+              this.loading = false
+              this.$emit('success')
+            }).catch(() => {
+              this.loading = false
+            })
+          }
+        })
+
+
+    },
+    onChange (e) {
+      if(e.target.value === "finish"){
+        this.finished = true
+      }else{
+        this.finished = false
+        this.help = ''
+      }
+    },
+    checkAmount () {
+      let user = this.form.getFieldsValue()
+      if (this.finished && !user.amount) {
+        this.help = "金额不能为空"
+        return false;
+      }
+      return true;
     }
   }
 }
