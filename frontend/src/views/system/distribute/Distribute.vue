@@ -36,7 +36,7 @@
     <div>
       <div class="operator">
 
-        <a-button @click="batchDelete" v-hasPermission="'user:export'">导入</a-button>
+        <!--<a-button @click="import" v-hasPermission="'user:export'">导入</a-button>-->
         <a-upload
           class="upload-area"
           :fileList="fileList"
@@ -52,7 +52,7 @@
           模板下载
         </a-button>
         <a-button
-          v-hasPermission="'user:export'"
+          v-hasPermission="'data:import'"
           @click="handleUpload"
           :disabled="fileList.length === 0"
           :loading="uploading">
@@ -144,8 +144,9 @@ import UserInfo from '../data/UserInfo'
 import RangeDate from '@/components/datetime/RangeDate'
 import UserAdd from '../data/UserAdd'
 import UserEdit from '../data/UserEdit'
-import ImportResult from '../../others/ImportResult'
+import ImportResult from '../../others/DataImportResult'
 import DataDistribute from './DataDistribute'
+import {mapState, mapMutations} from 'vuex'
 export default {
   name: 'User',
   components: {UserInfo, UserAdd, UserEdit, RangeDate,DataDistribute,ImportResult},
@@ -191,6 +192,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      currentUser: state => state.account.user
+    }),
     columns () {
       let { sortedInfo, filteredInfo } = this
       sortedInfo = sortedInfo || {}
@@ -199,18 +203,21 @@ export default {
         title: '姓名',
         dataIndex: 'clientName'
       }, {
-        title: '身份证',
+        title: '身份',
         dataIndex: 'clientIdNum'
       }, {
         title: '电话号码',
         dataIndex: 'clientPhone'
       }, {
+        title: '数据来源',
+        dataIndex: 'dataSource'
+      },{
         title: '状态',
         dataIndex: 'dataStatus',
         customRender: (text, row, index) => {
           switch (text) {
             case 'init':
-              return <a-tag color="blue">待签约</a-tag>
+              return <a-tag color="blue">待分配</a-tag>
             case 'redist':
               return <a-tag color="orange">重新配分</a-tag>
             case 'finish':
@@ -222,7 +229,7 @@ export default {
           }
         },
         filters: [
-          { text: '待签约', value: 'init' },
+          { text: '待分配', value: 'init' },
           { text: '重新配分', value: 'redist' },
           { text: '放款', value: 'finish' },
           { text: '拒绝', value: 'refused' },
@@ -269,7 +276,7 @@ export default {
       const formData = new FormData()
       formData.append('file', fileList[0])
       this.uploading = true
-      this.$upload('test/import', formData).then((r) => {
+      this.$upload('ddata/import', formData).then((r) => {
         let data = r.data.data
         if (data.data.length) {
           this.fetch()
@@ -462,6 +469,7 @@ export default {
         params.pageSize = this.pagination.defaultPageSize
         params.pageNum = this.pagination.defaultCurrent
       }
+      params.userId = this.currentUser.userId;
       this.$get('ddata', {
         ...params
       }).then((r) => {

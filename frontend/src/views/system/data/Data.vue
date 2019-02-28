@@ -88,9 +88,9 @@
           </a-popover>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon v-hasPermission="'user:update'" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修改用户"></a-icon>
+          <a-icon  type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="详情"></a-icon>
           &nbsp;
-          <a-icon v-hasPermission="'user:view'" type="eye" theme="twoTone" twoToneColor="#42b983" @click="view(record)" title="查看"></a-icon>
+          <a-icon  type="eye" theme="twoTone" twoToneColor="#42b983" @click="view(record)" title="查看"></a-icon>
           <a-badge v-hasNoPermission="'user:update','user:view'" status="warning" text="无权限"></a-badge>
         </template>
       </a-table>
@@ -131,7 +131,7 @@ import RangeDate from '@/components/datetime/RangeDate'
 import UserAdd from './UserAdd'
 import UserEdit from './UserEdit'
 import ImportResult from '../../others/ImportResult'
-
+import {mapState, mapMutations} from 'vuex'
 export default {
   name: 'User',
   components: {UserInfo, UserAdd, UserEdit, DeptInputTree, RangeDate,ImportResult},
@@ -172,6 +172,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      currentUser: state => state.account.user
+    }),
     columns () {
       let { sortedInfo, filteredInfo } = this
       sortedInfo = sortedInfo || {}
@@ -180,12 +183,13 @@ export default {
         title: '姓名',
         dataIndex: 'clientName'
       }, {
-        title: '身份证',
+        title: '身份',
         dataIndex: 'clientIdNum'
       }, {
         title: '电话号码',
         dataIndex: 'clientPhone'
-      }, {
+      },
+        {
         title: '详情',
         dataIndex: 'describe',
         scopedSlots: { customRender: 'remark' },
@@ -452,6 +456,7 @@ export default {
         params.pageSize = this.pagination.defaultPageSize
         params.pageNum = this.pagination.defaultCurrent
       }
+      params.userId = this.currentUser.userId;
       this.$get('ddata', {
         ...params
       }).then((r) => {
