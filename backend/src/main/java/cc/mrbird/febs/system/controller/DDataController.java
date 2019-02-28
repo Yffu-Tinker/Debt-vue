@@ -144,6 +144,7 @@ public class DDataController extends BaseController {
                 public void onSuccess(int sheet, int row, DData dData) {
                     // 数据校验成功时，加入集合
                     dData.setCreateTime(new Date());
+                    dData.setDataStatus("init");
                     dataList.add(dData);
                 }
 
