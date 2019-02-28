@@ -36,8 +36,8 @@
     <div>
       <div class="operator">
 
-        <!--<a-button @click="batchDelete" v-hasPermission="'user:export'">导入</a-button>-->
-        <!--<a-upload
+        <a-button @click="batchDelete" v-hasPermission="'user:export'">导入</a-button>
+        <a-upload
           class="upload-area"
           :fileList="fileList"
           :remove="handleRemove"
@@ -57,7 +57,7 @@
           :disabled="fileList.length === 0"
           :loading="uploading">
           {{uploading ? '导入中' : '导入Excel' }}
-        </a-button>-->
+        </a-button>
         <a-button type="primary" ghost @click="add" v-hasPermission="'user:add'">新增</a-button>
         <a-button type="primary" ghost @click="search" >刷新</a-button>
         <a-button type="primary" ghost @click="distribute" >分配</a-button>
@@ -102,13 +102,13 @@
           <a-badge v-hasNoPermission="'user:update','user:view'" status="warning" text="无权限"></a-badge>
         </template>
       </a-table>
-     <!-- <import-result
+      <import-result
         @close="handleClose"
         :importData="importData"
         :errors="errors"
         :times="times"
         :importResultVisible="importResultVisible">
-      </import-result>-->
+      </import-result>
     </div>
     <!-- 用户信息查看 -->
     <user-info
@@ -144,11 +144,11 @@ import UserInfo from '../data/UserInfo'
 import RangeDate from '@/components/datetime/RangeDate'
 import UserAdd from '../data/UserAdd'
 import UserEdit from '../data/UserEdit'
-//import ImportResult from '../../others/ImportResult'
+import ImportResult from '../../others/ImportResult'
 import DataDistribute from './DataDistribute'
 export default {
   name: 'User',
-  components: {UserInfo, UserAdd, UserEdit, RangeDate,DataDistribute},
+  components: {UserInfo, UserAdd, UserEdit, RangeDate,DataDistribute,ImportResult},
   data () {
     return {
       fileList: [],
@@ -242,34 +242,13 @@ export default {
   },
   mounted () {
     this.fetch()
-    /*this.$get('/user').then((r) => {
-//      this.operatorData =
-      let operators = r.data.rows
-      /!*Object.keys(operators).forEach((key) => {
-        if (fields.indexOf(key) !== -1) {
-          this.form.getFieldDecorator(key)
-          let obj = {}
-          obj[key] = user[key]
-          this.form.setFieldsValue(obj)
-        }
-      })*!/
-      this.operatorData = [];
-      let that = this;
-      operators.forEach((op) => {
-        that.operatorData.push({
-          title : op.username,
-          key:op.userId,
-          value:op.userId
-        })
-      })
-    })*/
   },
   methods: {
-    /*handleClose () {
+    handleClose () {
       this.importResultVisible = false
     },
     downloadTemplate () {
-      this.$download('test/template', {}, '导入模板.xlsx')
+      this.$download('ddata/template', {}, '导入模板.xlsx')
     },
     handleRemove (file) {
       if (this.uploading) {
@@ -306,7 +285,7 @@ export default {
         this.uploading = false
         this.fileList = []
       })
-    },*/
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -393,34 +372,7 @@ export default {
       }
       this.$refs.dataDistribute.setFormValues(userids.join(','))
       this.dataDistribute.visiable = true
-//      this.showSelectOperator = true;
-//      this.$refs.dataDistribute.setFormValues(record)
-//      this.dataDistribute.visiable = true
-//      let that = this
-      /*this.$confirm({
-        title: '确定重置选中用户密码?',
-        content: '当您点击确定按钮后，这些用户的密码将会重置为1234qwer',
-        centered: true,
-        onOk () {
-          let usernames = []
-          for (let key of that.selectedRowKeys) {
-            usernames.push(that.dataSource[key].username)
-          }
-          that.$put('user/password/reset', {
-            usernames: usernames.join(',')
-          }).then(() => {
-            that.$message.success('重置用户密码成功')
-            that.selectedRowKeys = []
-          })
-        },
-        onCancel () {
-          that.selectedRowKeys = []
-        }
-      })*/
     },
-    /*distribute(){
-      this.dataDistribute.visiable = true
-    },*/
     handleDataDistributeClose () {
       this.dataDistribute.visiable = false
     },

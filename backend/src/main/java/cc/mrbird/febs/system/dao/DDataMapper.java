@@ -5,4 +5,5 @@ import cc.mrbird.febs.system.domain.DData;
 
 public interface DDataMapper extends MyMapper<DData> {
 
+    void updateOperator(String[] dataIds, Integer userId);
 }

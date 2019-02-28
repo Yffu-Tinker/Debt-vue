@@ -4,8 +4,12 @@ package cc.mrbird.febs.system.service.impl;
 import cc.mrbird.febs.common.domain.QueryRequest;
 import cc.mrbird.febs.common.service.impl.BaseService;
 import cc.mrbird.febs.common.utils.FebsUtil;
+import cc.mrbird.febs.system.dao.DDataMapper;
+import cc.mrbird.febs.system.dao.UserMapper;
 import cc.mrbird.febs.system.domain.DData;
 import cc.mrbird.febs.system.domain.DDataHistory;
+import cc.mrbird.febs.system.domain.Test;
+import cc.mrbird.febs.system.domain.User;
 import cc.mrbird.febs.system.service.DDataHistoryService;
 import cc.mrbird.febs.system.service.DDataService;
 import com.wuwenze.poi.util.BeanUtil;
@@ -26,6 +30,11 @@ public class DDataServiceImpl extends BaseService<DData> implements DDataService
 
     @Autowired
     DDataHistoryService dDataHistoryService;
+
+    @Autowired
+    DDataMapper dDataMapper;
+    @Autowired
+    UserMapper userMapper;
 
     @Override
     @Transactional
@@ -64,5 +73,43 @@ public class DDataServiceImpl extends BaseService<DData> implements DDataService
 
         this.dDataHistoryService.save(dDataHistory);
         this.delete(dData.getId());
+    }
+
+    @Override
+    public void distributeData(Integer[] dataIds, Integer userId) {
+        DData dData;
+        User user = userMapper.selectByPrimaryKey(userId);
+        for (Integer dataId : dataIds) {
+            dData = new DData();
+            dData.setId(dataId);
+            dData.setOperatorId(userId);
+            dData.setOperatorName(user.getUsername());
+            this.updateNotNull(dData);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void batchInsert(List<DData> list) {
+        int total = list.size();
+        int max = 100;
+        int count = total / max;
+        int left = total % max;
+        int length;
+        if (left == 0) {
+            length = count;
+        } else {
+            length = count + 1;
+        }
+        for (int i = 0; i < length; i++) {
+            int start = max * i;
+            int end = max * (i + 1);
+            if (i != count) {
+                this.dDataMapper.insertList(list.subList(start, end));
+            } else {
+                end = total;
+                this.dDataMapper.insertList(list.subList(start, end));
+            }
+        }
     }
 }

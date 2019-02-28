@@ -33,14 +33,14 @@ public class DData implements Serializable {
      * 客户名
      */
     @Column(name = "CLIENT_NAME")
-    @ExcelField(value = "客户名")
+    @ExcelField(value = "客户姓名")
     private String clientName;
 
     /**
      * 客户身份证号
      */
     @Column(name = "CLIENT_ID_NUM")
-    @ExcelField(value = "客户身份证号")
+    @ExcelField(value = "身份证号")
     private String clientIdNum;
 
     /**
@@ -54,21 +54,21 @@ public class DData implements Serializable {
      * 数据状态 'redist 重新配分','finish 放款','dist 已分配','init 待签约', 'refused 拒绝'
      */
     @Column(name = "DATA_STATUS")
-    @ExcelField(value = "数据状态")
+//    @ExcelField(value = "数据状态")
     private String dataStatus;
 
     /**
      * 业务员id
      */
     @Column(name = "OPERATOR_ID")
-    @ExcelField(value = "业务员id")
+//    @ExcelField(value = "业务员id")
     private Integer operatorId;
 
     /**
      * 业务员姓名
      */
     @Column(name = "OPERATOR_NAME")
-    @ExcelField(value = "业务员姓名")
+//    @ExcelField(value = "业务员姓名")
     private String operatorName;
 
     /**
@@ -82,32 +82,32 @@ public class DData implements Serializable {
      * 创建时间
      */
     @Column(name = "CREATE_TIME")
-    @ExcelField(value = "创建时间")
+//    @ExcelField(value = "创建时间")
     private Date createTime;
 
     /**
      * 最后操作时间
      */
     @Column(name = "LAST_OPERAT_TIME")
-    @ExcelField(value = "最后操作时间")
+//    @ExcelField(value = "最后操作时间")
     private Date lastOperatTime;
 
     /**
      * 创建人
      */
     @Column(name = "CREATE_USER_ID")
-    @ExcelField(value = "创建人")
+//    @ExcelField(value = "创建人")
     private String createUserId;
 
     /**
      * 记录（备注）
      */
     @Column(name = "OPERATOR_DESCRIBE")
-    @ExcelField(value = "记录")
+//    @ExcelField(value = "记录")
     private String describe;
 
     @Column(name = "AMOUNT")
-    @ExcelField(value = "金额")
+    @ExcelField(value = "金额(万)")
     private Float amount;
 
 

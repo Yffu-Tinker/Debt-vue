@@ -17,4 +17,8 @@ public interface DDataService extends IService<DData> {
     void deleteDData(Integer dataId);
 
     void finishData(DData dData) throws Exception;
+
+    void distributeData(Integer[] dataIds, Integer userId);
+
+    void batchInsert(List<DData> dataList);
 }
