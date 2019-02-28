@@ -188,8 +188,10 @@ export default {
       }, {
         title: '电话号码',
         dataIndex: 'clientPhone'
-      },
-        {
+      }, {
+        title: '拥有者',
+        dataIndex: 'operatorName'
+      }, {
         title: '详情',
         dataIndex: 'describe',
         scopedSlots: { customRender: 'remark' },

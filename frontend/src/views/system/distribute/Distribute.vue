@@ -211,6 +211,9 @@ export default {
       }, {
         title: '数据来源',
         dataIndex: 'dataSource'
+      }, {
+        title: '业务员',
+        dataIndex: 'operatorName'
       },{
         title: '状态',
         dataIndex: 'dataStatus',

@@ -23,11 +23,7 @@
                   ]}]"/>
       </a-form-item>
       <a-form-item label="客户电话" v-bind="formItemLayout">
-        <a-input v-decorator="['clientPhone',
-                   {rules: [
-                    { required: true, message: '电话不能为空'},
-                    { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
-                  ]}]"/>
+        <a-input v-decorator="['clientPhone']"/>
       </a-form-item>
       <a-form-item label='金额(万)' v-bind="formItemLayout" :help="help">
         <a-input-number
