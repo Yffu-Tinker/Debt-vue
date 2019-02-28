@@ -111,7 +111,6 @@ public class DData implements Serializable {
     private Float amount;
 
 
-
     private static final long serialVersionUID = 1L;
 
 

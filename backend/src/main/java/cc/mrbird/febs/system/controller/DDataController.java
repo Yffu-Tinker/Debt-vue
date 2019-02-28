@@ -7,7 +7,6 @@ import cc.mrbird.febs.common.domain.FebsResponse;
 import cc.mrbird.febs.common.domain.QueryRequest;
 import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.system.domain.DData;
-import cc.mrbird.febs.system.domain.Test;
 import cc.mrbird.febs.system.service.DDataService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -42,8 +41,8 @@ public class DDataController extends BaseController {
 
     @GetMapping
     @Log("查询数据列表")
-    public Map<String, Object> ddataList(QueryRequest queryRequest, DData dData) {
-        return super.selectByPageNumSize(queryRequest, () -> this.dDataService.findDData(queryRequest, dData));
+    public Map<String, Object> ddataList(QueryRequest queryRequest, DData dData,Integer userId) {
+        return super.selectByPageNumSize(queryRequest, () -> this.dDataService.findDData(queryRequest, dData,userId));
     }
 
 
@@ -119,12 +118,12 @@ public class DDataController extends BaseController {
             list.add(dData);
         });
         // 构建模板
-        ExcelKit.$Export(Test.class, response).downXlsx(list, true);
+        ExcelKit.$Export(DData.class, response).downXlsx(list, true);
     }
 
 
     /**
-     * 导入Excel数据，并批量插入 T_TEST表
+     * 导入Excel数据，并批量插入
      */
     @PostMapping("import")
     public FebsResponse importExcels(@RequestParam("file") MultipartFile file) throws FebsException {
@@ -147,6 +146,7 @@ public class DDataController extends BaseController {
                     dData.setCreateTime(new Date());
                     dataList.add(dData);
                 }
+
                 @Override
                 public void onError(int sheet, int row, List<ExcelErrorField> errorFields) {
                     // 数据校验失败时，记录到 error集合
@@ -170,7 +170,6 @@ public class DDataController extends BaseController {
             throw new FebsException(message);
         }
     }
-
 
 
 }

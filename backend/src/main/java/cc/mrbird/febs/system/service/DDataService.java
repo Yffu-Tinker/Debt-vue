@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface DDataService extends IService<DData> {
 
-    List<DData> findDData(QueryRequest queryRequest,DData dData);
+    List<DData> findDData(QueryRequest queryRequest,DData dData,Integer userId);
 
     void createDData(DData dData);
 

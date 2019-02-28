@@ -8,7 +8,6 @@ import cc.mrbird.febs.system.dao.DDataMapper;
 import cc.mrbird.febs.system.dao.UserMapper;
 import cc.mrbird.febs.system.domain.DData;
 import cc.mrbird.febs.system.domain.DDataHistory;
-import cc.mrbird.febs.system.domain.Test;
 import cc.mrbird.febs.system.domain.User;
 import cc.mrbird.febs.system.service.DDataHistoryService;
 import cc.mrbird.febs.system.service.DDataService;
@@ -38,15 +37,19 @@ public class DDataServiceImpl extends BaseService<DData> implements DDataService
 
     @Override
     @Transactional
-    public List<DData> findDData(QueryRequest queryRequest, DData dData) {
+    public List<DData> findDData(QueryRequest queryRequest, DData dData, Integer userId) {
         Example example = new Example(DData.class);
         Example.Criteria criteria = example.createCriteria();
-        if (dData.getOperatorId() != null) {
-            criteria.andCondition("operator_id=", dData.getOperatorId());
+        if (userId != 1) {
+            criteria.andCondition("operator_id=", userId);
+        }
+        if(dData.getClientPhone()!=null){
+            criteria.andCondition("client_phone=", dData.getClientPhone());
         }
         FebsUtil.handleSort(queryRequest, example, "CREATE_TIME");
         return this.selectByExample(example);
     }
+
 
     @Override
     public void createDData(DData dData) {

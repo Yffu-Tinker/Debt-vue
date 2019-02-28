@@ -88,24 +88,24 @@ public class LoginController {
         return new FebsResponse().message("认证成功").data(userInfo);
     }
 
-    @GetMapping("index/{userId}")
-    public FebsResponse index(@NotBlank(message = "{required}") @PathVariable Long userId) {
-//        Map<String, Object> data = new HashMap<>();
-//        // 获取系统访问记录
-//        Long totalVisitCount = loginLogMapper.findTotalVisitCount();
-//        data.put("totalVisitCount", totalVisitCount);
-//        Long todayVisitCount = loginLogMapper.findTodayVisitCount();
-//        data.put("todayVisitCount", todayVisitCount);
-//        Long todayIp = loginLogMapper.findTodayIp();
-//        data.put("todayIp", todayIp);
-//        // 获取近期系统访问记录
-//        List<Map<String, Object>> lastSevenVisitCount = loginLogMapper.findLastSevenDaysVisitCount(null);
-//        data.put("lastSevenVisitCount", lastSevenVisitCount);
-//        User param = new User();
-//        param.setUsername(username);
-//        List<Map<String, Object>> lastSevenUserVisitCount = loginLogMapper.findLastSevenDaysVisitCount(param);
-//        data.put("lastSevenUserVisitCount", lastSevenUserVisitCount);
-        return new FebsResponse().data(this.dDataHistoryService.statistics(userId));
+    @GetMapping("index/{username}")
+    public FebsResponse index(@NotBlank(message = "{required}") @PathVariable String username) {
+        Map<String, Object> data = new HashMap<>();
+        // 获取系统访问记录
+        Long totalVisitCount = loginLogMapper.findTotalVisitCount();
+        data.put("totalVisitCount", totalVisitCount);
+        Long todayVisitCount = loginLogMapper.findTodayVisitCount();
+        data.put("todayVisitCount", todayVisitCount);
+        Long todayIp = loginLogMapper.findTodayIp();
+        data.put("todayIp", todayIp);
+        // 获取近期系统访问记录
+        List<Map<String, Object>> lastSevenVisitCount = loginLogMapper.findLastSevenDaysVisitCount(null);
+        data.put("lastSevenVisitCount", lastSevenVisitCount);
+        User param = new User();
+        param.setUsername(username);
+        List<Map<String, Object>> lastSevenUserVisitCount = loginLogMapper.findLastSevenDaysVisitCount(param);
+        data.put("lastSevenUserVisitCount", lastSevenUserVisitCount);
+        return new FebsResponse().data(data);
     }
 
     @RequiresPermissions("user:online")
@@ -118,8 +118,9 @@ public class LoginController {
             ActiveUser activeUser = mapper.readValue(userOnlineString, ActiveUser.class);
             activeUser.setToken(null);
             if (StringUtils.isNotBlank(username)) {
-                if (StringUtils.equalsIgnoreCase(username, activeUser.getUsername()))
+                if (StringUtils.equalsIgnoreCase(username, activeUser.getUsername())) {
                     activeUsers.add(activeUser);
+                }
             } else {
                 activeUsers.add(activeUser);
             }
