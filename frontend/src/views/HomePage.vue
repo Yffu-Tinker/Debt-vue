@@ -23,10 +23,13 @@
               <a-col :span="4"></a-col>
               <a-col :span="4"></a-col>
               <a-col :span="4">
-                <head-info title="本月完成数" :content="month" :center="false" :bordered="false"/>
+                <head-info title="今日IP" :content="todayIp" :center="false" :bordered="false"/>
               </a-col>
               <a-col :span="4">
-                <head-info title="总完成数" :content="total" :center="false" :bordered="false"/>
+                <head-info title="今日访问" :content="todayVisitCount" :center="false" :bordered="false"/>
+              </a-col>
+              <a-col :span="4">
+                <head-info title="总访问量" :content="totalVisitCount" :center="false" />
               </a-col>
             </a-row>
           </div>
@@ -34,398 +37,363 @@
       </a-card>
     </a-row>
     <a-row :gutter="8" class="count-info">
-     <!-- <a-col :span="12" class="visit-count-wrapper">
+      <a-col :span="12" class="visit-count-wrapper">
         <a-card class="visit-count">
           <apexchart ref="count" type=bar height=300 :options="chartOptions" :series="series" />
         </a-card>
-      </a-col>-->
-      <a-col class="project-wrapper">
-        <!--<a-card title="进行中的项目" class="project-card">-->
-          <div class="operator">
-            <a-button v-hasPermission="'role:add'" ghost type="primary" @click="add">新增</a-button>
-            <!--<a-dropdown v-hasPermission="'role:export'">
-              <a-menu slot="overlay">
-                <a-menu-item key="export-data" @click="exprotExccel">导出Excel</a-menu-item>
-              </a-menu>
-              <a-button>
-                更多操作 <a-icon type="down" />
-              </a-button>
-            </a-dropdown>-->
-            <!-- 表格区域 -->
-            <a-table ref="TableInfo"
-                     :columns="columns"
-                     :dataSource="dataSource"
-                     :pagination="pagination"
-                     :loading="loading"
-                     :scroll="{ x: 900 }"
-                     @change="handleTableChange">
-              <template slot="remark" slot-scope="text, record">
-                <a-popover placement="topLeft">
-                  <template slot="content">
-                    <div style="max-width: 200px">{{text}}</div>
-                  </template>
-                  <p style="width: 200px;margin-bottom: 0">{{text}}</p>
-                </a-popover>
-              </template>
-              <template slot="operation" slot-scope="text, record">
-                <a-icon type="eye" theme="twoTone" v-show="record.status" twoToneColor="#4a9ff5" @click="finish(record)" title="完成"></a-icon>
-                &nbsp;
-                <a-icon type="eye" theme="twoTone" v-show="record.status" twoToneColor="#42b983" @click="edit(record)" title="查看"></a-icon>
-                <a-icon type="eye" theme="twoTone" v-show="record.status" twoToneColor="#42b983" @click="distribute(record)" title="分配"></a-icon>
-              </template>
-            </a-table>
-            <!-- 新增数据 -->
-            <data-add
-              @close="handleDataAddClose"
-              @success="handleDataAddSuccess">
-            </data-add>
-            <!-- 修改用户 -->
-            <data-edit
-              ref="userEdit"
-              @close="handleDataEditClose"
-              @success="handleDataEditSuccess"
-              :dataEditVisiable="dataEdit.visiable">
-            </data-edit>
-            <!--分配用户 -->
-            <data-edit
-              ref="userDistribute"
-              @close="handleDataEditClose"
-              @success="handleDataEditSuccess"
-              :dataDistributeVisiable="dataDistribute.visiable">
-            </data-edit>
-          </div>
-        <!--</a-card>-->
+      </a-col>
+      <a-col :span="12" class="project-wrapper">
+        <a-card title="进行中的项目" class="project-card">
+          <a href="https://github.com/wuyouzhuguli?tab=repositories" target="_blank" slot="extra">所有项目</a>
+          <table>
+            <tr>
+              <td>
+                <div class="project-avatar-wrapper">
+                  <a-avatar class="project-avatar">{{projects[0].avatar}}</a-avatar>
+                </div>
+                <div class="project-detail">
+                  <div class="project-name">
+                    {{projects[0].name}}
+                  </div>
+                  <div class="project-desc">
+                    <p>{{projects[0].des}}</p>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="project-avatar-wrapper">
+                  <a-avatar class="project-avatar">{{projects[1].avatar}}</a-avatar>
+                </div>
+                <div class="project-detail">
+                  <div class="project-name">
+                    {{projects[1].name}}
+                  </div>
+                  <div class="project-desc">
+                    <p>{{projects[1].des}}</p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="project-avatar-wrapper">
+                  <a-avatar class="project-avatar">{{projects[2].avatar}}</a-avatar>
+                </div>
+                <div class="project-detail">
+                  <div class="project-name">
+                    {{projects[2].name}}
+                  </div>
+                  <div class="project-desc">
+                    <p>{{projects[2].des}}</p>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="project-avatar-wrapper">
+                  <a-avatar class="project-avatar">{{projects[3].avatar}}</a-avatar>
+                </div>
+                <div class="project-detail">
+                  <div class="project-name">
+                    {{projects[3].name}}
+                  </div>
+                  <div class="project-desc">
+                    <p>{{projects[3].des}}</p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="project-avatar-wrapper">
+                  <a-avatar class="project-avatar">{{projects[4].avatar}}</a-avatar>
+                </div>
+                <div class="project-detail">
+                  <div class="project-name">
+                    {{projects[4].name}}
+                  </div>
+                  <div class="project-desc">
+                    <p>{{projects[4].des}}</p>
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>
+          </table>
+        </a-card>
       </a-col>
     </a-row>
   </div>
 </template>
 <script>
-import HeadInfo from '@/views/common/HeadInfo'
-import DataAdd from '@/views/data/DataAdd'
-import DataEdit from '@/views/data/DataEdit'
-import DataDistribute from '@/views/data/DataDistribute'
-import {mapState} from 'vuex'
-import moment from 'moment'
-moment.locale('zh-cn');
+  import HeadInfo from '@/views/common/HeadInfo'
+  import {mapState} from 'vuex'
+  import moment from 'moment'
+  moment.locale('zh-cn')
 
-export default {
-  name: 'HomePage',
-  components: {HeadInfo,DataAdd,DataEdit,DataDistribute},
-  data () {
-    return {
-      month: '',
-      total: '',
-      userRole: '',
-      userDept: '',
-      lastLoginTime: '',
-      welcomeMessage: '',
-      dataAdd: {
-        visiable: false
-      },
-      dataEdit: {
-        visiable: false
-      },
-      dataDistribute: {
-        visiable: false
-      },
-      dataSource: [],
-      sortedInfo: null,
-      paginationInfo: null,
-      pagination: {
-        pageSizeOptions: ['10', '20', '30', '40', '100'],
-        defaultCurrent: 1,
-        defaultPageSize: 10,
-        showQuickJumper: true,
-        showSizeChanger: true,
-        showTotal: (total, range) => `显示 ${range[0]} ~ ${range[1]} 条记录，共 ${total} 条记录`
-      },
-      loading: false,
-      showFinishBtn:false,
-      showViewBtn:false
-    }
-  },
-  computed: {
-    ...mapState({
-      multipage: state => state.setting.multipage,
-      user: state => state.account.user
-    }),
-    avatar () {
-      return `static/avatar/${this.user.avatar}`
-    },
-    columns () {
-      let { sortedInfo, filteredInfo } = this;
-      sortedInfo = sortedInfo || {};
-      filteredInfo = filteredInfo || {};
-      return [{
-        title: '客户名称',
-        dataIndex: 'clientName'
-      }, {
-        title: '客户身份证',
-        dataIndex: 'clientIdNum'
-      }, {
-        title: '客户电话号码',
-        dataIndex: 'clientPhone'
-      }, {
-        title: '备注',
-        dataIndex: 'describe',
-        scopedSlots: { customRender: 'remark' },
-        width: 350
-      }, {
-        title: '状态',
-        dataIndex: 'dataStatus',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 'dist':
-              return '<a-tag color="orange">未完成</a-tag>'
-            case 'finish':
-              return '<a-tag color="green">完成</a-tag>'
-            default:
-              return text
+  export default {
+    name: 'HomePage',
+    components: {HeadInfo},
+    data () {
+      return {
+        series: [],
+        chartOptions: {
+          chart: {
+            toolbar: {
+              show: false
+            }
+          },
+          plotOptions: {
+            bar: {
+              horizontal: false,
+              columnWidth: '35%'
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
+          },
+          xaxis: {
+            categories: []
+          },
+          fill: {
+            opacity: 1
+
           }
         },
-        filters: [
-        { text: '未完成', value: 'dist' },
-        { text: '完成', value: 'finish' }
-      ],
-        filterMultiple: false,
-        filteredValue: filteredInfo.dataStatus || null,
-        onFilter: (value, record) => record.dataStatus.includes(value)
-      }, {
-        title: '操作',
-        dataIndex: 'operation',
-        scopedSlots: { customRender: 'operation' }
-      }]
-    }
-  },
-  methods: {
-    welcome() {
-      debugger;
-      const date = new Date()
-      const hour = date.getHours()
-      let time = hour < 6 ? '早上好' : (hour <= 11 ? '上午好' : (hour <= 13 ? '中午好' : (hour <= 18 ? '下午好' : '晚上好')))
-      let welcomeArr = [
-        '喝杯咖啡休息下吧☕',
-        '几天没见又更好看了呢',
-        '今天您微笑了吗😊',
-        '今天帮助别人解决问题了吗'
-      ]
-      let index = Math.floor((Math.random() * welcomeArr.length))
-      return `${time}，${this.user.username}，${welcomeArr[index]}`
+        projects: [
+          {
+            name: 'FEBS-Shiro',
+            des: 'Spring Boot 2.0.4 & Shiro1.4.0 权限管理系统。',
+            avatar: 'F'
+          },
+          {
+            name: 'FEBS-Security',
+            des: 'Spring Boot 2.0.4 & Spring Security 5.0.7 权限管理系统。',
+            avatar: 'F'
+          },
+          {
+            name: 'SpringAll',
+            des: '循序渐进学习Spring Boot、Spring Cloud与Spring Security。',
+            avatar: 'S'
+          },
+          {
+            name: 'FEBS-Shiro-Vue',
+            des: 'FEBS-Shiro前后端分离版本，前端架构采用Vue全家桶。',
+            avatar: 'F'
+          },
+          {
+            name: 'FEBS-Actuator',
+            des: '使用Spring Boot Admin 2.0.2构建，用于监控FEBS。',
+            avatar: 'F'
+          }
+        ],
+        todayIp: '',
+        todayVisitCount: '',
+        totalVisitCount: '',
+        userRole: '',
+        userDept: '',
+        lastLoginTime: '',
+        welcomeMessage: ''
+      }
+    },
+    computed: {
+      ...mapState({
+        multipage: state => state.setting.multipage,
+        user: state => state.account.user
+      }),
+      avatar () {
+        return `static/avatar/${this.user.avatar}`
+      }
+    },
+    methods: {
+      welcome () {
+        const date = new Date()
+        const hour = date.getHours()
+        let time = hour < 6 ? '早上好' : (hour <= 11 ? '上午好' : (hour <= 13 ? '中午好' : (hour <= 18 ? '下午好' : '晚上好')))
+        let welcomeArr = [
+          '喝杯咖啡休息下吧☕',
+          '要不要和朋友打局LOL',
+          '要不要和朋友打局王者荣耀',
+          '几天没见又更好看了呢😍',
+          '今天又写了几个Bug🐞呢',
+          '今天在群里吹水了吗',
+          '今天吃了什么好吃的呢',
+          '今天您微笑了吗😊',
+          '今天帮助别人解决问题了吗',
+          '准备吃些什么呢',
+          '周末要不要去看电影？'
+        ]
+        let index = Math.floor((Math.random() * welcomeArr.length))
+        return `${time}，${this.user.username}，${welcomeArr[index]}`
+      }
     },
     mounted () {
       this.welcomeMessage = this.welcome()
-      this.$get(`index/${this.user.id}`).then((r) => {
+      this.$get(`index/${this.user.username}`).then((r) => {
         let data = r.data.data
-        this.month = data.month
-        this.total = data.total
+        this.todayIp = data.todayIp
+        this.todayVisitCount = data.todayVisitCount
+        this.totalVisitCount = data.totalVisitCount
+        let sevenVisitCount = []
+        let dateArr = []
+        for (let i = 6; i >= 0; i--) {
+          let time = moment().subtract(i, 'days').format('MM-DD')
+          let contain = false
+          for (let o of data.lastSevenVisitCount) {
+            if (o.days === time) {
+              contain = true
+              sevenVisitCount.push(o.count)
+            }
+          }
+          if (!contain) {
+            sevenVisitCount.push(0)
+          }
+          dateArr.push(time)
+        }
+        let sevenUserVistCount = []
+        for (let i = 6; i >= 0; i--) {
+          let time = moment().subtract(i, 'days').format('MM-DD')
+          let contain = false
+          for (let o of data.lastSevenUserVisitCount) {
+            if (o.days === time) {
+              contain = true
+              sevenUserVistCount.push(o.count)
+            }
+          }
+          if (!contain) {
+            sevenUserVistCount.push(0)
+          }
+        }
+        this.$refs.count.updateSeries([
+          {
+            name: '您',
+            data: sevenUserVistCount
+          },
+          {
+            name: '总数',
+            data: sevenVisitCount
+          }
+        ], true)
+        this.$refs.count.updateOptions({
+          xaxis: {
+            categories: dateArr
+          },
+          title: {
+            text: '近七日系统访问记录',
+            align: 'left'
+          }
+        }, true, true)
       }).catch((r) => {
         console.error(r)
         this.$message.error('获取首页信息失败')
       })
-      this.fetch()
-    },
-    handleTableChange (pagination, filters, sorter) {
-      // 将这三个参数赋值给Vue data，用于后续使用
-      this.paginationInfo = pagination
-      this.filteredInfo = filters
-      this.sortedInfo = sorter
-
-      this.fetch({
-        sortField: sorter.field,
-        sortOrder: sorter.order,
-        ...filters
-      })
-    },
-    distribute(){
-      this.dataDistribute.visiable = true
-    },
-    handleDataAddClose () {
-      this.dataDistribute.visiable = false
-    },
-    handleDataAddSuccess () {
-      this.dataDistribute.visiable = false
-      this.$message.success('分配成功')
-      this.search()
-    },
-    add () {
-      this.dataAdd.visiable = true
-    },
-    handleDataAddClose () {
-      this.dataAdd.visiable = false
-    },
-    handleDataAddSuccess () {
-      this.dataAdd.visiable = false
-      this.$message.success('新增数据成功')
-      this.search()
-    },
-    edit ( record ) {
-      this.$refs.dataEdit.setFormValues(record)
-      this.dataEdit.visiable = true
-    },
-    handleDataEditClose () {
-      this.dataEdit.visiable = false
-    },
-    handleDataEditSuccess () {
-      this.dataEdit.visiable = false
-      this.$message.success('操作成功')
-    },
-    finish ( record ) {
-      this.$put('user', {
-        recordId: record.id,
-        userId: this.user.id
-      }).then((r) => {
-        this.$message.success('操作成功')
-        this.fetch()
-      }).catch(() => {
-        this.$message.success('操作失败')
-        this.fetch()
-      })
-    },
-    search () {
-      let {sortedInfo, filteredInfo} = this
-      let sortField, sortOrder
-      // 获取当前列的排序和列的过滤规则
-      if (sortedInfo) {
-        sortField = sortedInfo.field
-        sortOrder = sortedInfo.order
-      }
-      this.fetch({
-        sortField: sortField,
-        sortOrder: sortOrder,
-        ...filteredInfo
-      })
-    },
-    fetch ( params = {}) {
-      // 显示loading
-      this.loading = true
-      params.id = this.user.id
-      if (this.paginationInfo) {
-        // 如果分页信息不为空，则设置表格当前第几页，每页条数，并设置查询分页参数
-        this.$refs.TableInfo.pagination.current = this.paginationInfo.current
-        this.$refs.TableInfo.pagination.pageSize = this.paginationInfo.pageSize
-        params.pageSize = this.paginationInfo.pageSize
-        params.pageNum = this.paginationInfo.current
-      } else {
-        // 如果分页信息为空，则设置为默认值
-        params.pageSize = this.pagination.defaultPageSize
-        params.pageNum = this.pagination.defaultCurrent
-      }
-      this.$get('ddata', {
-        ...params
-      }).then((r) => {
-        let data = r.data
-        const pagination = {...this.pagination}
-        pagination.total = data.total
-        this.dataSource = data.rows
-        this.pagination = pagination
-        // 数据加载完毕，关闭loading
-        this.loading = false
-      })
     }
   }
-}
 </script>
 <style lang="less">
   .home-page {
-    .head-info {
-      margin-bottom: .5rem;
-      .head-info-card {
-        padding: .5rem;
-        border-color: #f1f1f1;
-        .head-info-avatar {
-          display: inline-block;
-          float: left;
-          margin-right: 1rem;
-          img {
-            width: 5rem;
-            border-radius: 2px;
-          }
-        }
-        .head-info-count {
-          display: inline-block;
-          float: left;
-          .head-info-welcome {
-            font-size: 1.05rem;
-            margin-bottom: .1rem;
-          }
-          .head-info-desc {
-            color: rgba(0, 0, 0, 0.45);
-            font-size: .8rem;
-            padding: .2rem 0;
-            p {
-              margin-bottom: 0;
-            }
-          }
-          .head-info-time {
-            color: rgba(0, 0, 0, 0.45);
-            font-size: .8rem;
-            padding: .2rem 0;
-          }
-        }
-      }
-    }
-    .count-info {
-      .visit-count-wrapper {
-        padding-left: 0 !important;
-        .visit-count {
-          padding: .5rem;
-          border-color: #f1f1f1;
-          .ant-card-body {
-            padding: .5rem 1rem !important;
-          }
-        }
-      }
-      .project-wrapper {
-        padding-right: 0 !important;
-        .project-card {
-          border: none !important;
-          .ant-card-head {
-            border-left: 1px solid #f1f1f1 !important;
-            border-top: 1px solid #f1f1f1 !important;
-            border-right: 1px solid #f1f1f1 !important;
-          }
-          .ant-card-body {
-            padding: 0 !important;
-            table {
-              width: 100%;
-              td {
-                width: 50%;
-                border: 1px solid #f1f1f1;
-                padding: .6rem;
-                .project-avatar-wrapper {
-                  display:inline-block;
-                  float:left;
-                  margin-right:.7rem;
-                  .project-avatar {
-                    color: #42b983;
-                    background-color: #d6f8b8;
-                  }
-                }
-              }
-            }
-          }
-          .project-detail {
-            display:inline-block;
-            float:left;
-            text-align:left;
-            width: 78%;
-            .project-name {
-              font-size:.9rem;
-              margin-top:-2px;
-              font-weight:600;
-            }
-            .project-desc {
-              color:rgba(0, 0, 0, 0.45);
-              p {
-                margin-bottom:0;
-                font-size:.6rem;
-                white-space:normal;
-              }
-            }
-          }
-        }
-      }
-    }
+  .head-info {
+    margin-bottom: .5rem;
+  .head-info-card {
+    padding: .5rem;
+    border-color: #f1f1f1;
+  .head-info-avatar {
+    display: inline-block;
+    float: left;
+    margin-right: 1rem;
+  img {
+    width: 5rem;
+    border-radius: 2px;
   }
-  @import "../../static/less/Common";
+  }
+  .head-info-count {
+    display: inline-block;
+    float: left;
+  .head-info-welcome {
+    font-size: 1.05rem;
+    margin-bottom: .1rem;
+  }
+  .head-info-desc {
+    color: rgba(0, 0, 0, 0.45);
+    font-size: .8rem;
+    padding: .2rem 0;
+  p {
+    margin-bottom: 0;
+  }
+  }
+  .head-info-time {
+    color: rgba(0, 0, 0, 0.45);
+    font-size: .8rem;
+    padding: .2rem 0;
+  }
+  }
+  }
+  }
+  .count-info {
+  .visit-count-wrapper {
+    padding-left: 0 !important;
+  .visit-count {
+    padding: .5rem;
+    border-color: #f1f1f1;
+  .ant-card-body {
+    padding: .5rem 1rem !important;
+  }
+  }
+  }
+  .project-wrapper {
+    padding-right: 0 !important;
+  .project-card {
+    border: none !important;
+  .ant-card-head {
+    border-left: 1px solid #f1f1f1 !important;
+    border-top: 1px solid #f1f1f1 !important;
+    border-right: 1px solid #f1f1f1 !important;
+  }
+  .ant-card-body {
+    padding: 0 !important;
+  table {
+    width: 100%;
+  td {
+    width: 50%;
+    border: 1px solid #f1f1f1;
+    padding: .6rem;
+  .project-avatar-wrapper {
+    display:inline-block;
+    float:left;
+    margin-right:.7rem;
+  .project-avatar {
+    color: #42b983;
+    background-color: #d6f8b8;
+  }
+  }
+  }
+  }
+  }
+  .project-detail {
+    display:inline-block;
+    float:left;
+    text-align:left;
+    width: 78%;
+  .project-name {
+    font-size:.9rem;
+    margin-top:-2px;
+    font-weight:600;
+  }
+  .project-desc {
+    color:rgba(0, 0, 0, 0.45);
+  p {
+    margin-bottom:0;
+    font-size:.6rem;
+    white-space:normal;
+  }
+  }
+  }
+  }
+  }
+  }
+  }
 </style>

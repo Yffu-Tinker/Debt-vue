@@ -36,7 +36,7 @@
     <div>
       <div class="operator">
 
-        <a-button @click="batchDelete" v-hasPermission="'user:export'">导入</a-button>
+        <!--<a-button @click="import" v-hasPermission="'user:export'">导入</a-button>-->
         <a-upload
           class="upload-area"
           :fileList="fileList"
@@ -52,7 +52,7 @@
           模板下载
         </a-button>
         <a-button
-          v-hasPermission="'user:export'"
+          v-hasPermission="'data:import'"
           @click="handleUpload"
           :disabled="fileList.length === 0"
           :loading="uploading">
@@ -144,8 +144,9 @@ import UserInfo from '../data/UserInfo'
 import RangeDate from '@/components/datetime/RangeDate'
 import UserAdd from '../data/UserAdd'
 import UserEdit from '../data/UserEdit'
-import ImportResult from '../../others/ImportResult'
+import ImportResult from '../../others/DataImportResult'
 import DataDistribute from './DataDistribute'
+import {mapState, mapMutations} from 'vuex'
 export default {
   name: 'User',
   components: {UserInfo, UserAdd, UserEdit, RangeDate,DataDistribute,ImportResult},
@@ -191,6 +192,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      currentUser: state => state.account.user
+    }),
     columns () {
       let { sortedInfo, filteredInfo } = this
       sortedInfo = sortedInfo || {}
@@ -269,7 +273,7 @@ export default {
       const formData = new FormData()
       formData.append('file', fileList[0])
       this.uploading = true
-      this.$upload('test/import', formData).then((r) => {
+      this.$upload('ddata/import', formData).then((r) => {
         let data = r.data.data
         if (data.data.length) {
           this.fetch()
@@ -462,6 +466,7 @@ export default {
         params.pageSize = this.pagination.defaultPageSize
         params.pageNum = this.pagination.defaultCurrent
       }
+      params.userId = this.currentUser.userId;
       this.$get('ddata', {
         ...params
       }).then((r) => {
