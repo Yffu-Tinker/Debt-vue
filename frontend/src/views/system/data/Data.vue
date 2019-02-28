@@ -183,12 +183,13 @@ export default {
         title: '姓名',
         dataIndex: 'clientName'
       }, {
-        title: '身份证',
+        title: '身份',
         dataIndex: 'clientIdNum'
       }, {
         title: '电话号码',
         dataIndex: 'clientPhone'
-      }, {
+      },
+        {
         title: '详情',
         dataIndex: 'describe',
         scopedSlots: { customRender: 'remark' },

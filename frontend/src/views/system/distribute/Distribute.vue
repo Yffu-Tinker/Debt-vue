@@ -203,18 +203,21 @@ export default {
         title: '姓名',
         dataIndex: 'clientName'
       }, {
-        title: '身份证',
+        title: '身份',
         dataIndex: 'clientIdNum'
       }, {
         title: '电话号码',
         dataIndex: 'clientPhone'
       }, {
+        title: '数据来源',
+        dataIndex: 'dataSource'
+      },{
         title: '状态',
         dataIndex: 'dataStatus',
         customRender: (text, row, index) => {
           switch (text) {
             case 'init':
-              return <a-tag color="blue">待签约</a-tag>
+              return <a-tag color="blue">待分配</a-tag>
             case 'redist':
               return <a-tag color="orange">重新配分</a-tag>
             case 'finish':
@@ -226,7 +229,7 @@ export default {
           }
         },
         filters: [
-          { text: '待签约', value: 'init' },
+          { text: '待分配', value: 'init' },
           { text: '重新配分', value: 'redist' },
           { text: '放款', value: 'finish' },
           { text: '拒绝', value: 'refused' },
