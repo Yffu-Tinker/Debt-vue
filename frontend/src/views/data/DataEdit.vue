@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="查看客户信息"
+    title="修改用户"
     :maskClosable="false"
     width=650
     placement="right"
@@ -22,10 +22,7 @@
         <a-textarea
           :rows="4"
           v-decorator="[
-          'describe',
-          {rules: [
-            { max: 100, message: '长度不能超过100个字'}
-          ]}]">
+          'describe']">
         </a-textarea>
       </a-form-item>
     </a-form>
@@ -91,6 +88,8 @@ export default {
           this.loading = true
           let user = this.form.getFieldsValue()
           user.id = this.id
+          user.operatorName = this.currentUser.username
+          user.operatorId = this.currentUser.id
           this.$put('ddata/update', {
             ...user
           }).then((r) => {

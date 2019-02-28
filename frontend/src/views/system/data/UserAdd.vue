@@ -40,7 +40,7 @@
           <a-radio defaultChecked value="init">待签约</a-radio>
           <a-radio value="finish">放款</a-radio>
           <a-radio value="refused">拒绝</a-radio>
-          <a-radio disabled value="redist">重新配分</a-radio>
+         <!-- <a-radio disabled value="redist">重新配分</a-radio>-->
         </a-radio-group>
       </a-form-item>
       <a-form-item label='详情' v-bind="formItemLayout">

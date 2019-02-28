@@ -125,7 +125,7 @@ export default {
             this.loading = true
             this.help = ''
             user.id = this.id
-            user.operatorName = this.currentUser.username
+//            user.operatorName = this.currentUser.username
 //          user.operatorId = parseFloat(this.currentUser.id)
             this.$post('ddata/update', {
               ...user

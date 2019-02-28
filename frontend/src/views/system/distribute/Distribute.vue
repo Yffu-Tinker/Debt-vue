@@ -37,7 +37,7 @@
       <div class="operator">
 
         <!--<a-button @click="batchDelete" v-hasPermission="'user:export'">导入</a-button>-->
-       <!-- <a-upload
+        <!--<a-upload
           class="upload-area"
           :fileList="fileList"
           :remove="handleRemove"
@@ -60,6 +60,14 @@
         </a-button>-->
         <a-button type="primary" ghost @click="add" v-hasPermission="'user:add'">新增</a-button>
         <a-button type="primary" ghost @click="search" >刷新</a-button>
+        <a-button type="primary" ghost @click="distribute" >分配</a-button>
+        <!--<a-tree-select
+          v-show="showSelectOperator"
+          :allowClear="true"
+          :dropdownStyle="{ maxHeight: '220px', overflow: 'scroll' }"
+          :treeData="operatorData"
+          @change="onOperatorChange">
+        </a-tree-select>-->
         <!--<a-dropdown v-hasAnyPermission="'user:reset','user:export'">
           <a-menu slot="overlay">
             &lt;!&ndash;<a-menu-item v-hasPermission="'user:reset'" key="password-reset" @click="resetPassword">密码重置</a-menu-item>&ndash;&gt;
@@ -121,20 +129,26 @@
       @success="handleUserEditSuccess"
       :userEditVisiable="userEdit.visiable">
     </user-edit>
+    <!--分配用户 -->
+    <data-distribute
+      ref="dataDistribute"
+      @close="handleDataDistributeClose"
+      @success="handleDataDistributeSuccess"
+      :dataDistributeVisiable="dataDistribute.visiable">
+    </data-distribute>
   </a-card>
 </template>
 
 <script>
-import UserInfo from './UserInfo'
-import DeptInputTree from '../dept/DeptInputTree'
+import UserInfo from '../data/UserInfo'
 import RangeDate from '@/components/datetime/RangeDate'
-import UserAdd from './UserAdd'
-import UserEdit from './UserEdit'
-import ImportResult from '../../others/ImportResult'
-
+import UserAdd from '../data/UserAdd'
+import UserEdit from '../data/UserEdit'
+//import ImportResult from '../../others/ImportResult'
+import DataDistribute from './DataDistribute'
 export default {
   name: 'User',
-  components: {UserInfo, UserAdd, UserEdit, DeptInputTree, RangeDate,ImportResult},
+  components: {UserInfo, UserAdd, UserEdit, RangeDate,DataDistribute},
   data () {
     return {
       fileList: [],
@@ -154,13 +168,18 @@ export default {
       userEdit: {
         visiable: false
       },
+      dataDistribute: {
+        visiable: false
+      },
       queryParams: {},
       filteredInfo: null,
       sortedInfo: null,
       paginationInfo: null,
       dataSource: [],
       selectedRowKeys: [],
+//      operatorData:[],
       loading: false,
+//      showSelectOperator:false,
       pagination: {
         pageSizeOptions: ['10', '20', '30', '40', '100'],
         defaultCurrent: 1,
@@ -185,11 +204,6 @@ export default {
       }, {
         title: '电话号码',
         dataIndex: 'clientPhone'
-      }, {
-        title: '详情',
-        dataIndex: 'describe',
-        scopedSlots: { customRender: 'remark' },
-        width: 350
       }, {
         title: '状态',
         dataIndex: 'dataStatus',
@@ -216,6 +230,9 @@ export default {
         filterMultiple: false,
         filteredValue: filteredInfo.dataStatus || null,
         onFilter: (value, record) => record.dataStatus.includes(value)
+      },{
+        title: '业务员',
+        dataIndex: 'operatorName'
       }, {
         title: '操作',
         dataIndex: 'operation',
@@ -225,6 +242,27 @@ export default {
   },
   mounted () {
     this.fetch()
+    /*this.$get('/user').then((r) => {
+//      this.operatorData =
+      let operators = r.data.rows
+      /!*Object.keys(operators).forEach((key) => {
+        if (fields.indexOf(key) !== -1) {
+          this.form.getFieldDecorator(key)
+          let obj = {}
+          obj[key] = user[key]
+          this.form.setFieldsValue(obj)
+        }
+      })*!/
+      this.operatorData = [];
+      let that = this;
+      operators.forEach((op) => {
+        that.operatorData.push({
+          title : op.username,
+          key:op.userId,
+          value:op.userId
+        })
+      })
+    })*/
   },
   methods: {
     /*handleClose () {
@@ -344,13 +382,22 @@ export default {
         }
       })
     },
-    resetPassword () {
+    distribute () {
       if (!this.selectedRowKeys.length) {
-        this.$message.warning('请选择需要重置密码的用户')
+        this.$message.warning('请选择需要分配的数据')
         return
       }
-      let that = this
-      this.$confirm({
+      let userids = []
+      for (let key of this.selectedRowKeys) {
+        userids.push(this.dataSource[key].id)
+      }
+      this.$refs.dataDistribute.setFormValues(userids.join(','))
+      this.dataDistribute.visiable = true
+//      this.showSelectOperator = true;
+//      this.$refs.dataDistribute.setFormValues(record)
+//      this.dataDistribute.visiable = true
+//      let that = this
+      /*this.$confirm({
         title: '确定重置选中用户密码?',
         content: '当您点击确定按钮后，这些用户的密码将会重置为1234qwer',
         centered: true,
@@ -369,7 +416,18 @@ export default {
         onCancel () {
           that.selectedRowKeys = []
         }
-      })
+      })*/
+    },
+    /*distribute(){
+      this.dataDistribute.visiable = true
+    },*/
+    handleDataDistributeClose () {
+      this.dataDistribute.visiable = false
+    },
+    handleDataDistributeSuccess () {
+      this.dataDistribute.visiable = false
+      this.$message.success('分配成功')
+      this.search()
     },
     exportExcel () {
       let {sortedInfo, filteredInfo} = this
