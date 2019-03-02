@@ -5,10 +5,7 @@ import com.wuwenze.poi.annotation.ExcelField;
 import lombok.Data;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -109,6 +106,10 @@ public class DData implements Serializable {
     @Column(name = "AMOUNT")
     @ExcelField(value = "金额(万)")
     private Float amount;
+
+
+    @Transient
+    private String describeAdd;
 
 
     private static final long serialVersionUID = 1L;

@@ -6,6 +6,7 @@ import cc.mrbird.febs.common.controller.BaseController;
 import cc.mrbird.febs.common.domain.FebsResponse;
 import cc.mrbird.febs.common.domain.QueryRequest;
 import cc.mrbird.febs.common.exception.FebsException;
+import cc.mrbird.febs.common.utils.DateTimeUtils;
 import cc.mrbird.febs.system.domain.DData;
 import cc.mrbird.febs.system.service.DDataService;
 import com.google.common.collect.ImmutableMap;
@@ -41,8 +42,8 @@ public class DDataController extends BaseController {
 
     @GetMapping
     @Log("查询数据列表")
-    public Map<String, Object> ddataList(QueryRequest queryRequest, DData dData,Integer userId) {
-        return super.selectByPageNumSize(queryRequest, () -> this.dDataService.findDData(queryRequest, dData,userId));
+    public Map<String, Object> ddataList(QueryRequest queryRequest, DData dData, Integer userId) {
+        return super.selectByPageNumSize(queryRequest, () -> this.dDataService.findDData(queryRequest, dData, userId));
     }
 
 
@@ -53,6 +54,10 @@ public class DDataController extends BaseController {
 
     @PostMapping("/update")
     public FebsResponse updateData(@Valid DData dData) throws FebsException {
+        String des = dData.getDescribeAdd();
+        if (StringUtils.isNotEmpty(des)){
+            dData.setDescribe(dData.getDescribe()+des+ "  ---" + DateTimeUtils.convertDateToStringByFormat(new Date())+"\n\r");
+        }
         if ("finish".equals(dData.getDataStatus())) {
             if (dData.getAmount() == null || dData.getAmount() < 0.1) {
                 return new FebsResponse().message("放款金额不能小于1000元");
