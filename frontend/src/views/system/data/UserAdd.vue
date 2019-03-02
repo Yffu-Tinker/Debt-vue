@@ -29,8 +29,7 @@
         <a-input v-model="user.clientPhone"
                  v-decorator="['clientPhone',
                    {rules: [
-                    { required: true, message: '电话不能为空'},
-                    { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
+                    { required: true, message: '电话不能为空'}
                   ]}]"/>
       </a-form-item>
       <a-form-item label='状态' v-bind="formItemLayout">
@@ -139,9 +138,9 @@ export default {
         if (username.length > 10) {
           this.validateStatus = 'error'
           this.help = '用户名不能超过10个字符'
-        } else if (username.length < 4) {
+        } else if (username.length < 2) {
           this.validateStatus = 'error'
-          this.help = '用户名不能少于4个字符'
+          this.help = '用户名不能少于2个字符'
         } else {
           this.validateStatus = 'validating'
           this.$get(`user/check/${username}`).then((r) => {

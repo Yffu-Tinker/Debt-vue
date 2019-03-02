@@ -33,9 +33,7 @@
       <a-form-item label="手机" v-bind="formItemLayout">
         <a-input
           v-model="user.mobile"
-          v-decorator="['mobile', {rules: [
-            { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
-          ]}]"/>
+          v-decorator="['mobile']"/>
       </a-form-item>
       <a-form-item label='角色' v-bind="formItemLayout">
         <a-select
@@ -146,9 +144,9 @@ export default {
         if (username.length > 10) {
           this.validateStatus = 'error'
           this.help = '用户名不能超过10个字符'
-        } else if (username.length < 4) {
+        } else if (username.length < 2) {
           this.validateStatus = 'error'
-          this.help = '用户名不能少于4个字符'
+          this.help = '用户名不能少于2个字符'
         } else {
           this.validateStatus = 'validating'
           this.$get(`user/check/${username}`).then((r) => {

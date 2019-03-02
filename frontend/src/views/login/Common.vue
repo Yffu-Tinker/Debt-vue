@@ -66,10 +66,10 @@ export default {
             text-decoration: none;
           }
           .logo {
-            width: 40px;
-            height: 19px;
+            width: 120px;
+            height: 80px;
             vertical-align: center;
-            margin-right: 16px;
+            margin-right: -20px;
           }
           .title {
             font-size: 28px;

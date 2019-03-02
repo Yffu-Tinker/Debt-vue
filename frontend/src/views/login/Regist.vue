@@ -185,8 +185,8 @@ export default {
       if (username.length) {
         if (username.length > 10) {
           callback(new Error('用户名不能超过10个字符'))
-        } else if (username.length < 4) {
-          callback(new Error('用户名不能少于4个字符'))
+        } else if (username.length < 2) {
+          callback(new Error('用户名不能少于2个字符'))
         } else {
           this.$get(`user/check/${username}`).then((r) => {
             if (r.data) {

@@ -214,6 +214,9 @@ export default {
       }, {
         title: '业务员',
         dataIndex: 'operatorName'
+      }, {
+        title: '金额',
+        dataIndex: 'amount'
       },{
         title: '状态',
         dataIndex: 'dataStatus',
@@ -241,9 +244,6 @@ export default {
         filteredValue: filteredInfo.dataStatus || null,
         onFilter: (value, record) => record.dataStatus.includes(value)
       },{
-        title: '业务员',
-        dataIndex: 'operatorName'
-      }, {
         title: '操作',
         dataIndex: 'operation',
         scopedSlots: { customRender: 'operation' }

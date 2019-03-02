@@ -187,10 +187,16 @@ export default {
         dataIndex: 'clientIdNum'
       }, {
         title: '电话号码',
-        dataIndex: 'clientPhone'
+        dataIndex: 'clientPhone',
+        customRender: (text, row, index) => {
+          return text.substring(0,3)+'********'
+        }
       }, {
         title: '拥有者',
         dataIndex: 'operatorName'
+      }, {
+        title: '金额',
+        dataIndex: 'amount'
       }, {
         title: '详情',
         dataIndex: 'describe',

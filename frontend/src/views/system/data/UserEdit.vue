@@ -43,10 +43,17 @@
         </a-radio-group>
       </a-form-item>
       <a-form-item label='详情' v-bind="formItemLayout">
-        <a-textarea
-          :rows="24"
+        <a-textarea disabled
+          :rows="10"
           v-decorator="[
           'describe']">
+        </a-textarea>
+      </a-form-item>
+      <a-form-item label='操作' v-bind="formItemLayout">
+        <a-textarea
+          :rows="10" defaultValue=""
+          v-decorator="[
+          'describeAdd']">
         </a-textarea>
       </a-form-item>
     </a-form>
@@ -101,7 +108,7 @@ export default {
     },
     setFormValues ({...user}) {
       this.id = user.id
-      let fields = ['clientName', 'clientIdNum', 'clientPhone', 'describe']
+      let fields = ['clientName', 'clientIdNum', 'clientPhone', 'describe','describeAdd','dataStatus','amount']
       Object.keys(user).forEach((key) => {
         if (fields.indexOf(key) !== -1) {
           this.form.getFieldDecorator(key)
