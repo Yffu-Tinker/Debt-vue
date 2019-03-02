@@ -49,7 +49,7 @@ public class User implements Serializable {
     private Long userId;
 
     @Column(name = "USERNAME")
-    @Size(min = 4, max = 10, message = "{range}")
+    @Size(min = 2, max = 10, message = "{range}")
     @ExcelField(value = "用户名")
     private String username;
 
